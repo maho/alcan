@@ -6,134 +6,15 @@ from cymunk import Body, Circle, PivotJoint, Segment, Space, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
+from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.widget import Widget
 
+from anim import AnimObject, PhysicsObject
 import defs
-
-class PhysicsObject(object):
-    """ super object, which holds physics in class attributes """
-
-    space = None
-    bodyobjects = {}
-    
-    mass = NumericProperty(10, allownone=True)
-    momentum = NumericProperty('INF', allownone=True)
+from element import Element
 
 
-
-    def __init__(self):
-        if self.space is None:
-            self.init_physics()
-
-    @staticmethod
-    def init_physics():
-        """ instead of using space as global variable """
-        cls = PhysicsObject
-        cls.space = Space()
-        cls.space.iterations = 60
-        cls.space.gravity = defs.gravity
-
-        radius = 100
-
-        cls.floor = Segment(cls.space.static_body, Vec2d(-1000, defs.floor_level - radius), Vec2d(5000, defs.floor_level - radius), radius)
-        cls.floor.elasticity = 0.6
-        cls.floor.friction = 0.4
-        cls.space.add_static(cls.floor)
-
-    @classmethod
-    def update_space(cls):
-        cls.space.step(1.0/20.0)
-
-        for b, o in cls.bodyobjects.items():
-            o.update_to_body()
-
-    def add_to_space(self, body, space):
-        space = self.space
-
-        if self.mass is not None:
-            space.add(self.body)
-
-        space.add(self.shape)
-
-        self.bodyobjects[self.body] = self
-
-    def update_to_body(self):
-        p = self.body.position
-        self.center = tuple(p)
-
-#        if self.center_y < defs.kill_level:
-#            self.out_of_bounds()
-#
-#    def out_of_bounds(self):
-#        del(self.bodyobjects[self.body])
-#        self.space.remove(self.body)
-#        self.space.remove(self.shape)
-#        self.parent.remove_widget(self)
-
-        
-
-
-
-class AnimObject(Widget, PhysicsObject):
-
-    collision_type = NumericProperty(0)
-    layers = None
-
-    def __init__(self, *args, **kwargs):
-        super(AnimObject, self).__init__(*args, **kwargs)
-
-        self.add_body()
-
-    def add_body(self, dt=None):
-
-        if not self.parent: #object not initialized yet
-            #call myself in next frame, 
-            Clock.schedule_once(self.add_body)
-            return
-
-        if self.mass is None:
-            self.momentum is None
-
-        self.body = Body(self.mass, self.momentum)
-        self.body.position = self.center
-
-        self.shape = self.create_shape()
-
-
-
-        self.add_to_space(self.body, self.shape)
-
-    def create_shape(self):
-        sx, sy = self.size
-        radius = (sx + sy)/4 #half of avg
-        shape = Circle(self.body, radius)
-        shape.elasticity = 0.6
-        shape.friction = 0.4
-        shape.collision_type = self.collision_type
-        if self.layers:
-            shape.layers = self.layers
-
-        return shape
-
-
-class Element(AnimObject):
-    collision_type = 1
-    layers = defs.NORMAL_LAYER
-
-    def __init__(self, elname, *a, mass=50, momentum=10, **kw):
-        super(Element, self).__init__(*a, **kw)
-        self.elname = elname
-        self.imgsrc = "img/" + elname + ".png"
-
-    def unjoint(self):
-        """ remove existing joint """
-        if not self.joint:
-            return
-        joint = self.joint
-        self.joint = None
-        self.space.remove(joint)
-        del(joint)
 
 class Cannon(AnimObject):
     collision_type = 2
@@ -170,6 +51,8 @@ class Cannon(AnimObject):
         for x in self.bullets:
             x.unjoint()
             x.body.apply_impulse(impulse)
+            x.shape.layers = defs.NORMAL_LAYER
+        self.bullets = []
 
 
 
@@ -194,7 +77,10 @@ class Wizard(AnimObject):
         element.joint = PivotJoint(self.body, element.body, pivot)
         self.space.add(element.joint)
 
-
+    def add_body(self, dt=None):
+        super(Wizard, self).add_body(dt=dt)
+        if self.body: #if obj is initialized ye
+            self.body.velocity_limit = defs.wizard_max_speed
 
     def on_touch_up(self, touch):
         px, py = touch.pos
@@ -226,16 +112,38 @@ class Wizard(AnimObject):
 
 class AlcanGame(Widget, PhysicsObject):
     def __init__(self, *args, **kwargs):
+    
+        Window.size = defs.map_size
+
         super(AlcanGame, self).__init__(*args, **kwargs)
 
-        self._keyboard = Window.request_keyboard(None, self)
-        self._keyboard.bind(on_key_up=self.on_key_up)
+        self.oo_to_remove = set()
 
-        Clock.schedule_interval(self.update, 1.0/20.0)
+        self._keyboard = Window.request_keyboard(None, self)
+        self._keyboard.bind(on_key_down=self.on_keyboard)
+
+        Clock.schedule_interval(self.update, 1.0/defs.fps)
 
         #collision handlers
         self.space.add_collision_handler(Wizard.collision_type, Element.collision_type, self.wizard_vs_element)
         self.space.add_collision_handler(Element.collision_type, Cannon.collision_type, self.cannon_vs_element)
+        self.space.add_collision_handler(Element.collision_type, Element.collision_type, self.element_vs_element)
+
+    def remove_obj(self, obj, dt=None, just_schedule=True):
+        if just_schedule:
+            Logger.debug("game: schedule %s to be removed", obj)
+            self.oo_to_remove.add(obj)
+            return
+        Logger.info("game: remove object obj=%s", obj)
+        self.space.remove(obj.body)
+        self.space.remove(obj.shape)
+        self.remove_widget(obj)
+        del(self.bodyobjects[obj.body])
+
+    def replace_obj(self, a, b, dt=None):
+        self.add_widget(b)
+        #Clock.schedule_once(partial(self.remove_obj, a))
+        self.remove_obj(a)
 
 
     def wizard_vs_element(self, space, arbiter):
@@ -254,10 +162,13 @@ class AlcanGame(Widget, PhysicsObject):
 
         Clock.schedule_once(partial(cannon.carry_element, element))
 
+    def element_vs_element(self, space, arbiter):
+        e1, e2 = [self.bodyobjects[s.body] for s in arbiter.shapes]
+
+        Clock.schedule_once(partial(e1.collide_with_another,e2))
 
 
-
-    def on_key_up(self, window, key, *largs):
+    def on_keyboard(self, window, key, *largs):
         #code = self._keyboard.keycode_to_string(key)
         kid, code = key
 
@@ -279,6 +190,15 @@ class AlcanGame(Widget, PhysicsObject):
 
         if random.random() < defs.drop_chance:
             self.drop_element()
+
+        for o in self.children:
+            if isinstance(o, AnimObject):
+                o.update(dt)
+
+        for o in self.oo_to_remove:
+            self.remove_obj(o, just_schedule=False)
+            assert o not in self.children
+        self.oo_to_remove.clear()
 
     def drop_element(self):
         """ drop element from heaven """

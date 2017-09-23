@@ -21,7 +21,7 @@
             source: root.imgsrc
 
 
-<Cannon>
+<Cannon>:
     size: 100, 100
     angle: 0
 
@@ -39,6 +39,15 @@
             source: "img/cannon.png"
 
         PopMatrix
+
+<Explosion>:
+    size: 100, 100
+    frame: 1
+    canvas:
+        Rectangle:
+            pos: root.pos
+            size: self.size
+            source: "img/explosion%02d.png"%root.frame
 
 
 
