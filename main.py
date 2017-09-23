@@ -5,7 +5,7 @@ from cymunk import Body, Circle, PivotJoint, Segment, Space, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.widget import Widget
 
 import defs
@@ -125,12 +125,29 @@ class Element(AnimObject):
 class Cannon(AnimObject):
     collision_type = 2
     angle = NumericProperty(0)
+    offset = ObjectProperty((0,0))
 
     def create_shape(self):
         """ make cannon a sensor """
         shape = super(Cannon, self).create_shape()
         shape.sensor = True
+        shape.layers = defs.CARRIED_THINGS_LAYER
         return shape
+
+    def carry_element(self, element, dt=None):
+        #unbind joint from element
+        joint = element.joint
+        element.joint = None
+        self.space.remove(joint)
+        del(joint)
+        
+        #move it to center of cannon
+        pivot = self.body.position + Vec2d(self.offset)
+        element.body.position = pivot
+        element.joint = PivotJoint(self.body, element.body, pivot)
+        self.space.add(element.joint)
+
+
 
 
 class Wizard(AnimObject):
@@ -152,10 +169,10 @@ class Wizard(AnimObject):
 
         #bind it to wizard
         ##move element up
-        pivot = self.body.position + Vec2d(0, 30)
+        pivot = self.body.position + Vec2d(defs.wizard_hand)
         element.body.position = pivot
-        joint = PivotJoint(self.body, element.body, pivot)
-        self.space.add(joint)
+        element.joint = PivotJoint(self.body, element.body, pivot)
+        self.space.add(element.joint)
 
 
 
@@ -198,6 +215,7 @@ class AlcanGame(Widget, PhysicsObject):
 
         #collision handlers
         self.space.add_collision_handler(Wizard.collision_type, Element.collision_type, self.wizard_vs_element)
+        self.space.add_collision_handler(Element.collision_type, Cannon.collision_type, self.cannon_vs_element)
 
 
     def wizard_vs_element(self, space, arbiter):
@@ -207,6 +225,14 @@ class AlcanGame(Widget, PhysicsObject):
             wizard, element = element, wizard
 
         Clock.schedule_once(partial(wizard.carry_element, element))
+
+    def cannon_vs_element(self, space, arbiter):
+        cannon, element = [ self.bodyobjects[s.body] for s in arbiter.shapes ]
+
+        if isinstance(cannon, Element):
+            cannon, element = element, cannon
+
+        Clock.schedule_once(partial(cannon.carry_element, element))
 
 
 

@@ -4,8 +4,8 @@ floor_level = 50
 kill_level = -1000
 
 wizard_mass = 100
-
 wizard_impulse = (4000, 1000)
+wizard_hand = (30, -20) #offset from center, where wizard carry things
 
 minswipe = 100
 

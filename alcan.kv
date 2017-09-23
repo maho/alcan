@@ -1,3 +1,5 @@
+#:import defs defs
+#:import Vec2d cymunk.Vec2d
 
 <Wizard>:
     size: 78, 98
@@ -23,12 +25,14 @@
     size: 100, 100
     angle: 0
 
+    offset: 0, -25
+
     canvas:
         PushMatrix
         Rotate
             angle: root.angle
-            origin: self.center[0], self.center[1] - self.size[1]/4
-        
+            origin: Vec2d(self.center) + Vec2d(self.offset)
+
         Rectangle:
             pos: root.pos
             size: self.size
