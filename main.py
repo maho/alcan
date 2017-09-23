@@ -1,6 +1,7 @@
+from functools import partial
 import random
 
-from cymunk import Body, Circle, Segment, Space, Vec2d
+from cymunk import Body, Circle, PivotJoint, Segment, Space, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
@@ -13,7 +14,11 @@ class PhysicsObject(object):
     """ super object, which holds physics in class attributes """
 
     space = None
-    bodyobjects = []
+    bodyobjects = {}
+    
+    mass = NumericProperty(10, allownone=True)
+    momentum = NumericProperty('INF', allownone=True)
+
 
 
     def __init__(self):
@@ -39,13 +44,18 @@ class PhysicsObject(object):
     def update_space(cls):
         cls.space.step(1.0/20.0)
 
-        for b in cls.bodyobjects:
-            b.update_to_body()
+        for b, o in cls.bodyobjects.items():
+            o.update_to_body()
 
     def add_to_space(self, body, space):
         space = self.space
-        space.add(self.body, self.shape)
-        self.bodyobjects.append(self)
+
+        if self.mass is not None:
+            space.add(self.body)
+
+        space.add(self.shape)
+
+        self.bodyobjects[self.body] = self
 
     def update_to_body(self):
         p = self.body.position
@@ -55,7 +65,7 @@ class PhysicsObject(object):
             self.out_of_bounds()
 
     def out_of_bounds(self):
-        self.bodyobjects.remove(self)
+        del(self.bodyobjects[self.body])
         self.space.remove(self.body)
         self.space.remove(self.shape)
         self.parent.remove_widget(self)
@@ -66,8 +76,7 @@ class PhysicsObject(object):
 
 class AnimObject(Widget, PhysicsObject):
 
-    mass = NumericProperty(10)
-    momentum = NumericProperty('INF')
+    collision_type = NumericProperty(0)
 
     def __init__(self, *args, **kwargs):
         super(AnimObject, self).__init__(*args, **kwargs)
@@ -81,39 +90,74 @@ class AnimObject(Widget, PhysicsObject):
             Clock.schedule_once(self.add_body)
             return
 
-        if self.mass == 0:
-            self.body = self.space.static_body
-        else:
-            self.body = Body(self.mass, self.momentum)
-            self.body.position = self.center
+        if self.mass is None:
+            self.momentum is None
 
+        self.body = Body(self.mass, self.momentum)
+        self.body.position = self.center
+
+
+        self.shape = self.create_shape()
+
+
+
+        self.add_to_space(self.body, self.shape)
+
+    def create_shape(self):
         sx, sy = self.size
         radius = (sx + sy)/4 #half of avg
+        shape = Circle(self.body, radius)
+        shape.elasticity = 0.6
+        shape.friction = 0.4
+        shape.collision_type = self.collision_type
 
-        self.shape = Circle(self.body, radius)
-        self.shape.elasticity = 0.6
-        self.shape.friction = 0.4
+        return shape
 
-        if self.body == self.space.static_body:
-            self.space.add_static(self.shape)
-        else:
-            self.add_to_space(self.body, self.shape)
 
 class Element(AnimObject):
+    collision_type = 1
+
     def __init__(self, elname, *a, mass=50, momentum=10, **kw):
         super(Element, self).__init__(*a, **kw)
         self.elname = elname
         self.imgsrc = "img/" + elname + ".png"
 
 class Cannon(AnimObject):
+    collision_type = 2
     angle = NumericProperty(0)
+
+    def create_shape(self):
+        """ make cannon a sensor """
+        shape = super(Cannon, self).create_shape()
+        shape.sensor = True
+        return shape
 
 
 class Wizard(AnimObject):
 
+    collision_type = 3
+
     def __init__(self, *a, **kw):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.down_pos = None
+
+    def create_shape(self):
+        ret = super(Wizard, self).create_shape()
+        ret.layers = defs.NORMAL_LAYER
+        return ret
+
+    def carry_element(self, element, dt=None):
+        #move element to "carried elements layer"
+        element.shape.layers = defs.CARRIED_THINGS_LAYER
+
+        #bind it to wizard
+        ##move element up
+        pivot = self.body.position + Vec2d(0, 30)
+        element.body.position = pivot
+        joint = PivotJoint(self.body, element.body, pivot)
+        self.space.add(joint)
+
+
 
     def on_touch_up(self, touch):
         px, py = touch.pos
@@ -136,11 +180,9 @@ class Wizard(AnimObject):
 
     
     def move_right(self):
-        print("right")
         self.body.apply_impulse(defs.wizard_impulse)
 
     def move_left(self):
-        print ("left")
         ix, iy = defs.wizard_impulse
 
         self.body.apply_impulse((ix*-1, iy))
@@ -154,6 +196,20 @@ class AlcanGame(Widget, PhysicsObject):
 
         Clock.schedule_interval(self.update, 1.0/20.0)
 
+        #collision handlers
+        self.space.add_collision_handler(Wizard.collision_type, Element.collision_type, self.wizard_vs_element)
+
+
+    def wizard_vs_element(self, space, arbiter):
+        wizard, element = [ self.bodyobjects[s.body] for s in arbiter.shapes ]
+
+        if isinstance(wizard, Element):
+            wizard, element = element, wizard
+
+        Clock.schedule_once(partial(wizard.carry_element, element))
+
+
+
 
     def on_key_up(self, window, key, *largs):
         #code = self._keyboard.keycode_to_string(key)
@@ -164,9 +220,9 @@ class AlcanGame(Widget, PhysicsObject):
         elif code == 'right':
             self.wizard.move_right()
         elif code == 'up':
-            self.cannon.angle -= 10
+            self.cannon.angle += 3
         elif code == 'down':
-            self.cannon.angle += 10
+            self.cannon.angle -= 3
         else:
             print("unknown code=",code)
 
@@ -193,6 +249,7 @@ class AlcanGame(Widget, PhysicsObject):
         element = Element('water', center=(x, h))
         self.add_widget(element)
 
+    
 
 
 
