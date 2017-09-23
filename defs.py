@@ -4,10 +4,12 @@ floor_level = 50
 kill_level = -1000
 
 wizard_mass = 100
-wizard_impulse = (4000, 1000)
+wizard_impulse = (5000, 1000)
 wizard_hand = (30, -20) #offset from center, where wizard carry things
 
-minswipe = 100
+shoot_force = 8000
+
+mintouchdist = 100
 
 protected_area = (300, 500) #range from each side of map, where elements are not dropped (cannon is there)
 

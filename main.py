@@ -1,4 +1,5 @@
 from functools import partial
+from math import radians
 import random
 
 from cymunk import Body, Circle, PivotJoint, Segment, Space, Vec2d
@@ -61,14 +62,14 @@ class PhysicsObject(object):
         p = self.body.position
         self.center = tuple(p)
 
-        if self.center_y < defs.kill_level:
-            self.out_of_bounds()
-
-    def out_of_bounds(self):
-        del(self.bodyobjects[self.body])
-        self.space.remove(self.body)
-        self.space.remove(self.shape)
-        self.parent.remove_widget(self)
+#        if self.center_y < defs.kill_level:
+#            self.out_of_bounds()
+#
+#    def out_of_bounds(self):
+#        del(self.bodyobjects[self.body])
+#        self.space.remove(self.body)
+#        self.space.remove(self.shape)
+#        self.parent.remove_widget(self)
 
         
 
@@ -77,6 +78,7 @@ class PhysicsObject(object):
 class AnimObject(Widget, PhysicsObject):
 
     collision_type = NumericProperty(0)
+    layers = None
 
     def __init__(self, *args, **kwargs):
         super(AnimObject, self).__init__(*args, **kwargs)
@@ -96,7 +98,6 @@ class AnimObject(Widget, PhysicsObject):
         self.body = Body(self.mass, self.momentum)
         self.body.position = self.center
 
-
         self.shape = self.create_shape()
 
 
@@ -110,36 +111,50 @@ class AnimObject(Widget, PhysicsObject):
         shape.elasticity = 0.6
         shape.friction = 0.4
         shape.collision_type = self.collision_type
+        if self.layers:
+            shape.layers = self.layers
 
         return shape
 
 
 class Element(AnimObject):
     collision_type = 1
+    layers = defs.NORMAL_LAYER
 
     def __init__(self, elname, *a, mass=50, momentum=10, **kw):
         super(Element, self).__init__(*a, **kw)
         self.elname = elname
         self.imgsrc = "img/" + elname + ".png"
 
+    def unjoint(self):
+        """ remove existing joint """
+        if not self.joint:
+            return
+        joint = self.joint
+        self.joint = None
+        self.space.remove(joint)
+        del(joint)
+
 class Cannon(AnimObject):
     collision_type = 2
     angle = NumericProperty(0)
     offset = ObjectProperty((0,0))
+    layers = defs.CARRIED_THINGS_LAYER
+
+    def __init__(self, *args, **kwargs):
+        super(Cannon, self).__init__(*args, **kwargs)
+
+        self.bullets = []
 
     def create_shape(self):
         """ make cannon a sensor """
         shape = super(Cannon, self).create_shape()
         shape.sensor = True
-        shape.layers = defs.CARRIED_THINGS_LAYER
         return shape
 
     def carry_element(self, element, dt=None):
         #unbind joint from element
-        joint = element.joint
-        element.joint = None
-        self.space.remove(joint)
-        del(joint)
+        element.unjoint()
         
         #move it to center of cannon
         pivot = self.body.position + Vec2d(self.offset)
@@ -147,21 +162,26 @@ class Cannon(AnimObject):
         element.joint = PivotJoint(self.body, element.body, pivot)
         self.space.add(element.joint)
 
+        self.bullets.append(element)
+
+    def shoot(self):
+        impulse = Vec2d(0, defs.shoot_force)
+        impulse.rotate(radians(self.angle))
+        for x in self.bullets:
+            x.unjoint()
+            x.body.apply_impulse(impulse)
+
 
 
 
 class Wizard(AnimObject):
 
     collision_type = 3
+    layers = defs.NORMAL_LAYER
 
     def __init__(self, *a, **kw):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.down_pos = None
-
-    def create_shape(self):
-        ret = super(Wizard, self).create_shape()
-        ret.layers = defs.NORMAL_LAYER
-        return ret
 
     def carry_element(self, element, dt=None):
         #move element to "carried elements layer"
@@ -182,7 +202,7 @@ class Wizard(AnimObject):
         
         dx, dy = px - opx, py - opy
 
-        if abs(dx) < defs.minswipe and abs(dy) < defs.minswipe:
+        if abs(dx) < defs.mintouchdist and abs(dy) < defs.mintouchdist:
             return
 
         if abs(dx) > 2*abs(dy):
@@ -249,6 +269,8 @@ class AlcanGame(Widget, PhysicsObject):
             self.cannon.angle += 3
         elif code == 'down':
             self.cannon.angle -= 3
+        elif code == 'spacebar':
+            self.cannon.shoot()
         else:
             print("unknown code=",code)
 
