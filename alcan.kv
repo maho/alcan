@@ -7,6 +7,16 @@
             size: self.size
             source: 'img/wizard.png'
 
+<Element>:
+    size: 30, 30
+    imgsrc: None
+
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: root.imgsrc
+
 <AlcanGame>:
     canvas:
         Rectangle:

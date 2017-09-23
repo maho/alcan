@@ -1,3 +1,5 @@
+import random
+
 from cymunk import Body, Circle, Segment, Space, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
@@ -10,7 +12,7 @@ class PhysicsObject(object):
     """ super object, which holds physics in class attributes """
 
     space = None
-    bodyobject = []
+    bodyobjects = []
 
 
     def __init__(self):
@@ -22,10 +24,12 @@ class PhysicsObject(object):
         """ instead of using space as global variable """
         cls = PhysicsObject
         cls.space = Space()
-        cls.space.iterations = 20
+        cls.space.iterations = 60
         cls.space.gravity = defs.gravity
 
-        cls.floor = Segment(cls.space.static_body, Vec2d(-1000, defs.floor_level), Vec2d(5000, defs.floor_level), 0)
+        radius = 100
+
+        cls.floor = Segment(cls.space.static_body, Vec2d(-1000, defs.floor_level - radius), Vec2d(5000, defs.floor_level - radius), radius)
         cls.floor.elasticity = 0.6
         cls.floor.friction = 0.4
         cls.space.add_static(cls.floor)
@@ -34,24 +38,36 @@ class PhysicsObject(object):
     def update_space(cls):
         cls.space.step(1.0/20.0)
 
-        for b in cls.bodyobject:
+        for b in cls.bodyobjects:
             b.update_to_body()
 
     def add_to_space(self, body, space):
         space = self.space
         space.add(self.body, self.shape)
-        self.bodyobject.append(self)
+        self.bodyobjects.append(self)
 
     def update_to_body(self):
         p = self.body.position
         self.center = tuple(p)
 
+        if self.center_y < defs.kill_level:
+            self.out_of_bounds()
+
+    def out_of_bounds(self):
+        self.bodyobjects.remove(self)
+        self.space.remove(self.body)
+        self.space.remove(self.shape)
+        self.parent.remove_widget(self)
+
+        
+
+
 
 class AnimObject(Widget, PhysicsObject):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, mass=10, momentum='INF', *args, **kwargs):
         super(AnimObject, self).__init__(*args, **kwargs)
        
-        self.body = Body(defs.wizard_mass, 'INF')
+        self.body = Body(mass, momentum)
         self.body.position = self.center
 
         sx, sy = self.size
@@ -63,12 +79,17 @@ class AnimObject(Widget, PhysicsObject):
 
         self.add_to_space(self.body, self.shape)
 
+class Element(AnimObject):
+    def __init__(self, elname, *a, mass=50, momentum=10, **kw):
+        super(Element, self).__init__(*a, **kw)
+        self.elname = elname
+        self.imgsrc = "img/" + elname + ".png"
 
 
 class Wizard(AnimObject):
 
     def __init__(self, *a, **kw):
-        super(Wizard, self).__init__(*a, **kw)
+        super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.down_pos = None
 
     def on_touch_up(self, touch):
@@ -110,7 +131,7 @@ class AlcanGame(Widget, PhysicsObject):
 
         Clock.schedule_interval(self.update, 1.0/20.0)
 
-        self.wizard = Wizard(center=(200,200))
+        self.wizard = Wizard(center=(400,400))
         self.add_widget(self.wizard)
 
     def on_key_up(self, window, key, *largs):
@@ -125,6 +146,27 @@ class AlcanGame(Widget, PhysicsObject):
 
     def update(self, dt):
         self.update_space()
+
+        if random.random() < defs.drop_chance:
+            self.drop_element()
+
+    def drop_element(self):
+        """ drop element from heaven """
+        
+        w, h = self.size
+        protl, protr = defs.protected_area
+        protw = protr - protl
+
+        #get proper x coordinate
+        x = random.randint(0, w) - protw*2
+        if x > protl:
+            x += protw
+        if x > w - protr:
+            x += protw
+
+        element = Element('water', center=(x, h))
+        self.add_widget(element)
+
 
 
 
