@@ -20,10 +20,10 @@ class Cannon(AnimObject):
     collision_type = 2
     angle = NumericProperty(0)
     offset = ObjectProperty((0,0))
-    layers = defs.CARRIED_THINGS_LAYER
 
     def __init__(self, *args, **kwargs):
         super(Cannon, self).__init__(*args, **kwargs)
+        self.layers = defs.CARRIED_THINGS_LAYER
 
         self.bullets = []
 
@@ -60,11 +60,11 @@ class Cannon(AnimObject):
 class Wizard(AnimObject):
 
     collision_type = 3
-    layers = defs.NORMAL_LAYER
 
     def __init__(self, *a, **kw):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.down_pos = None
+        self.layers = defs.NORMAL_LAYER
 
     def carry_element(self, element, dt=None):
         #move element to "carried elements layer"
@@ -214,7 +214,7 @@ class AlcanGame(Widget, PhysicsObject):
         if x > w - protr:
             x += protw
 
-        element = Element('water', center=(x, h))
+        element = Element.random(center=(x, h))
         self.add_widget(element)
 
     

@@ -18,10 +18,10 @@ mintouchdist = 100
 protected_area = (300, 500) #range from each side of map, where elements are not dropped (cannon is there)
 map_size = (1350, 720)
 
-drop_chance = 0.02
+drop_chance = 0.01
 
 #constants
 
 NORMAL_LAYER = 1
-CARRIED_THINGS_LAYER = 1<<1
-VISUAL_EFFECTS_LAYER = 1<<2
+CARRIED_THINGS_LAYER = (1<<1)
+VISUAL_EFFECTS_LAYER = (1<<2)

@@ -73,12 +73,12 @@ class PhysicsObject(object):
 class AnimObject(Widget, PhysicsObject):
 
     collision_type = NumericProperty(0)
-    layers = None
 
     def __init__(self, *args, **kwargs):
         super(AnimObject, self).__init__(*args, **kwargs)
         
         self.body = None
+        self.layers = None
         self.add_body()
 
     def add_body(self, dt=None):

@@ -1,5 +1,5 @@
 from functools import partial
-from random import shuffle
+from random import choice
 
 from kivy.clock import Clock
 from kivy.logger import Logger
@@ -22,10 +22,10 @@ def combine_elements(a, b):
 
 class Explosion(AnimObject):
 
-    layers = defs.VISUAL_EFFECTS_LAYER
 
     def __init__(self, *a, **kw):
         super(Explosion, self).__init__(*a, **kw)
+        self.layers = defs.VISUAL_EFFECTS_LAYER
 
     def update(self, dt):
         if self.parent is None:
@@ -52,14 +52,15 @@ class Explosion(AnimObject):
 
 class Element(AnimObject):
     collision_type = 1
-    layers = defs.NORMAL_LAYER
 
-    available_elnames = {'water', 'fire', 'earth', 'air'}
+    #available_elnames = {'water', 'fire', 'earth', 'air'}
+    available_elnames = {'water', 'air', 'earth', 'fire'}
 
     def __init__(self, elname, *a, mass=50, momentum=10, **kw):
         super(Element, self).__init__(*a, **kw)
         self.elname = elname
         self.imgsrc = "img/" + elname + ".png"
+        self.layers = defs.NORMAL_LAYER
 
     def unjoint(self):
         """ remove existing joint """
@@ -85,8 +86,8 @@ class Element(AnimObject):
         self.parent.replace_obj(self, Element(new_elname, center=self.center))
 
     @classmethod
-    def random(cls):
-        return Element(elname=shuffle(cls.available_elnames))
+    def random(cls, **kwargs):
+        return Element(elname=choice(list(cls.available_elnames)), **kwargs)
 
         
 
