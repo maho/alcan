@@ -15,10 +15,11 @@ shoot_force = 8000
 
 mintouchdist = 100
 
-protected_area = (300, 500) #range from each side of map, where elements are not dropped (cannon is there)
 map_size = (1350, 720)
 
 drop_chance = 0.01
+drop_zone = (0, 400)
+num_elements_in_zone = (1,5)
 
 #constants
 

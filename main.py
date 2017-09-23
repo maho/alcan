@@ -76,6 +76,7 @@ class Wizard(AnimObject):
         element.body.position = pivot
         element.joint = PivotJoint(self.body, element.body, pivot)
         self.space.add(element.joint)
+        self.parent.num_elements_in_zone -= 1
 
     def add_body(self, dt=None):
         super(Wizard, self).add_body(dt=dt)
@@ -118,6 +119,8 @@ class AlcanGame(Widget, PhysicsObject):
         super(AlcanGame, self).__init__(*args, **kwargs)
 
         self.oo_to_remove = set()
+        self.oo_to_add = []
+        self.num_elements_in_zone = 0
 
         self._keyboard = Window.request_keyboard(None, self)
         self._keyboard.bind(on_key_down=self.on_keyboard)
@@ -128,6 +131,9 @@ class AlcanGame(Widget, PhysicsObject):
         self.space.add_collision_handler(Wizard.collision_type, Element.collision_type, self.wizard_vs_element)
         self.space.add_collision_handler(Element.collision_type, Cannon.collision_type, self.cannon_vs_element)
         self.space.add_collision_handler(Element.collision_type, Element.collision_type, self.element_vs_element)
+
+    def schedule_add_widget(self, oclass, *oargs, **okwargs):
+        self.oo_to_add.append((oclass, oargs, okwargs))
 
     def remove_obj(self, obj, dt=None, just_schedule=True):
         if just_schedule:
@@ -140,14 +146,14 @@ class AlcanGame(Widget, PhysicsObject):
         self.remove_widget(obj)
         del(self.bodyobjects[obj.body])
 
-    def replace_obj(self, a, b, dt=None):
-        self.add_widget(b)
-        #Clock.schedule_once(partial(self.remove_obj, a))
+    def replace_obj(self, a, BClass, *Bargs, **Bkwargs):
         self.remove_obj(a)
+        Bkwargs['center'] = a.center
+        self.schedule_add_widget(BClass, *Bargs, **Bkwargs)
 
 
     def wizard_vs_element(self, space, arbiter):
-        wizard, element = [ self.bodyobjects[s.body] for s in arbiter.shapes ]
+        wizard, element = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
         if isinstance(wizard, Element):
             wizard, element = element, wizard
@@ -188,7 +194,9 @@ class AlcanGame(Widget, PhysicsObject):
     def update(self, dt):
         self.update_space()
 
-        if random.random() < defs.drop_chance:
+        mi, ma = defs.num_elements_in_zone
+        n = self.num_elements_in_zone
+        if (random.random() < defs.drop_chance or n < mi) and n < ma:
             self.drop_element()
 
         for o in self.children:
@@ -197,27 +205,26 @@ class AlcanGame(Widget, PhysicsObject):
 
         for o in self.oo_to_remove:
             self.remove_obj(o, just_schedule=False)
+            Logger.debug("%s just removed", o)
             assert o not in self.children
         self.oo_to_remove.clear()
 
+        for ocl, oa, okw in self.oo_to_add:
+            newo = ocl(*oa, **okw)
+            Logger.debug("newo %s created", newo)
+            self.add_widget(newo)
+        self.oo_to_add.clear()
+
     def drop_element(self):
         """ drop element from heaven """
-        
         w, h = self.size
-        protl, protr = defs.protected_area
-        protw = protr - protl
 
         #get proper x coordinate
-        x = random.randint(0, w) - protw*2
-        if x > protl:
-            x += protw
-        if x > w - protr:
-            x += protw
+        x = random.randint(*defs.drop_zone)
 
         element = Element.random(center=(x, h))
         self.add_widget(element)
-
-    
+        self.num_elements_in_zone += 1
 
 
 

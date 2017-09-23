@@ -9,12 +9,12 @@ from anim import AnimObject
 import defs
 
 elmap = {
-        ('water', 'fire'): 'steam'
+        ('fire', 'water'): 'steam'
     }
 
 def combine_elements(a, b):
     try:
-        return elmap[a, b]
+        return elmap[tuple(sorted((a, b)))]
     except KeyError:
         return None
 
@@ -53,14 +53,17 @@ class Explosion(AnimObject):
 class Element(AnimObject):
     collision_type = 1
 
-    #available_elnames = {'water', 'fire', 'earth', 'air'}
-    available_elnames = {'water', 'air', 'earth', 'fire'}
+    available_elnames = {'water', 'fire'}
+    #available_elnames = {'water', 'air', 'earth', 'fire'}
 
     def __init__(self, elname, *a, mass=50, momentum=10, **kw):
-        super(Element, self).__init__(*a, **kw)
         self.elname = elname
+        super(Element, self).__init__(*a, **kw)
         self.imgsrc = "img/" + elname + ".png"
         self.layers = defs.NORMAL_LAYER
+
+    def __repr__(self):
+        return "[E:%s id=%s]"%(self.elname, id(self))
 
     def unjoint(self):
         """ remove existing joint """
@@ -72,18 +75,21 @@ class Element(AnimObject):
         del(joint)
 
     def collide_with_another(self, element, dt=None):
+        Logger.debug("collision: %s vs %s (%s vs %s)", self.elname, element.elname, self, element)
         if self.parent is None:
             Logger.debug("hey, my parent is still none, (and me=%s)", self)
             return
         new_elname = combine_elements(self.elname, element.elname)
+
         if new_elname is None:
-            self.parent.replace_obj(self, Explosion(center=self.center))
+            self.parent.replace_obj(self, Explosion, center=self.center)
             self.parent.remove_obj(element)
             return
 
         self.available_elnames.add(new_elname)
 
-        self.parent.replace_obj(self, Element(new_elname, center=self.center))
+        self.parent.replace_obj(self, Element, new_elname)
+        self.parent.remove_obj(element)
 
     @classmethod
     def random(cls, **kwargs):
