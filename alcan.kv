@@ -17,9 +17,43 @@
             size: self.size
             source: root.imgsrc
 
+
+<Cannon>
+    size: 100, 100
+    angle: 0
+
+    canvas:
+        PushMatrix
+        Rotate
+            angle: root.angle
+            origin: self.center[0], self.center[1] - self.size[1]/4
+        
+        Rectangle:
+            pos: root.pos
+            size: self.size
+            source: "img/cannon.png"
+
+        PopMatrix
+
+
+
+
 <AlcanGame>:
     canvas:
         Rectangle:
             pos: self.pos
             size: self.size
             source: 'img/bg.jpg'
+
+    wizard: wizard
+    cannon: cannon
+
+
+    Cannon:
+        id: cannon
+        pos: 400, 50
+        mass: 0
+
+    Wizard:
+        id: wizard
+        pos: 300, 100

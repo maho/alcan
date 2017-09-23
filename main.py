@@ -4,6 +4,7 @@ from cymunk import Body, Circle, Segment, Space, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
+from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
 import defs
@@ -64,11 +65,27 @@ class PhysicsObject(object):
 
 
 class AnimObject(Widget, PhysicsObject):
-    def __init__(self, mass=10, momentum='INF', *args, **kwargs):
+
+    mass = NumericProperty(10)
+    momentum = NumericProperty('INF')
+
+    def __init__(self, *args, **kwargs):
         super(AnimObject, self).__init__(*args, **kwargs)
-       
-        self.body = Body(mass, momentum)
-        self.body.position = self.center
+
+        self.add_body()
+
+    def add_body(self, dt=None):
+
+        if not self.parent: #object not initialized yet
+            #call myself in next frame, 
+            Clock.schedule_once(self.add_body)
+            return
+
+        if self.mass == 0:
+            self.body = self.space.static_body
+        else:
+            self.body = Body(self.mass, self.momentum)
+            self.body.position = self.center
 
         sx, sy = self.size
         radius = (sx + sy)/4 #half of avg
@@ -77,13 +94,19 @@ class AnimObject(Widget, PhysicsObject):
         self.shape.elasticity = 0.6
         self.shape.friction = 0.4
 
-        self.add_to_space(self.body, self.shape)
+        if self.body == self.space.static_body:
+            self.space.add_static(self.shape)
+        else:
+            self.add_to_space(self.body, self.shape)
 
 class Element(AnimObject):
     def __init__(self, elname, *a, mass=50, momentum=10, **kw):
         super(Element, self).__init__(*a, **kw)
         self.elname = elname
         self.imgsrc = "img/" + elname + ".png"
+
+class Cannon(AnimObject):
+    angle = NumericProperty(0)
 
 
 class Wizard(AnimObject):
@@ -131,8 +154,6 @@ class AlcanGame(Widget, PhysicsObject):
 
         Clock.schedule_interval(self.update, 1.0/20.0)
 
-        self.wizard = Wizard(center=(400,400))
-        self.add_widget(self.wizard)
 
     def on_key_up(self, window, key, *largs):
         #code = self._keyboard.keycode_to_string(key)
@@ -140,9 +161,14 @@ class AlcanGame(Widget, PhysicsObject):
 
         if code == 'left':
             self.wizard.move_left()
-    
-        if code == 'right':
+        elif code == 'right':
             self.wizard.move_right()
+        elif code == 'up':
+            self.cannon.angle -= 10
+        elif code == 'down':
+            self.cannon.angle += 10
+        else:
+            print("unknown code=",code)
 
     def update(self, dt):
         self.update_space()
