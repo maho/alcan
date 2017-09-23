@@ -2,12 +2,12 @@ fps = 20
 
 gravity = (0, -700)
 
-friction = 0.3
+friction = 0.5
 floor_level = 50
 kill_level = -1000
 
 wizard_mass = 100
-wizard_impulse = (8000, 1000)
+wizard_impulse = (10000, 1000)
 wizard_hand = (30, -20) #offset from center, where wizard carry things
 wizard_max_speed = 240
 
