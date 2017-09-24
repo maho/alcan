@@ -27,6 +27,15 @@ class Cannon(AnimObject):
 
         self.bullets = []
 
+    def on_touch_move(self, touch):
+        #Logger.debug("touch=%r", touch)
+        if abs(touch.dy) > abs(touch.dx):
+            self.angle += touch.dy/2
+
+    def on_touch_down(self, touch):
+        if touch.is_double_tap:
+            self.shoot()
+
     def create_shape(self):
         """ make cannon a sensor """
         shape = super(Cannon, self).create_shape()
@@ -64,7 +73,6 @@ class Wizard(AnimObject):
 
     def __init__(self, *a, **kw):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
-        self.down_pos = None
         self.layers = defs.NORMAL_LAYER
 
     def carry_element(self, element, dt=None):
@@ -84,26 +92,14 @@ class Wizard(AnimObject):
         if self.body: #if obj is initialized ye
             self.body.velocity_limit = defs.wizard_max_speed
 
-    def on_touch_up(self, touch):
-        px, py = touch.pos
-        opx, opy = self.center
-        
-        dx, dy = px - opx, py - opy
-
-        if abs(dx) < defs.mintouchdist and abs(dy) < defs.mintouchdist:
-            return
-
-        if abs(dx) > 2*abs(dy):
-            if dx > 0:
+    def on_touch_move(self, touch):
+        #Logger.debug("touch=%r", touch)
+        if abs(touch.dx) > abs(touch.dy):
+            if touch.dx > 0:
                 self.move_right()
             else:
                 self.move_left()
-        
 
-    def on_touch_down(self, touch):
-        self.down_pos = touch.pos
-
-    
     def move_right(self):
         self.body.apply_impulse(defs.wizard_impulse)
 
