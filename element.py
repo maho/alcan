@@ -1,5 +1,6 @@
 from functools import partial
 from random import choice
+import re
 
 from kivy.clock import Clock
 from kivy.logger import Logger
@@ -8,13 +9,33 @@ from kivy.vector import Vector
 from anim import AnimObject
 import defs
 
-elmap = {
-        ('fire', 'water'): 'steam'
-    }
+def load_elmap():
+    if load_elmap.data:
+        return load_elmap.data
+    with open("data/elmap.txt") as f:
+        for line in f:
+            g = re.match("^(.*)=(.*)\+(.*)$", line)
+            if not g:
+                continue
+            c = g.group(1).strip()
+            a = g.group(2).strip()
+            b = g.group(3).strip()
+
+        key = tuple(sorted([a,b]))
+        assert key not in load_elmap.data, "duplicate combination %s"%key
+        load_elmap.data[key] = c
+
+    return load_elmap.data
+
+
+load_elmap.data = {}
 
 def combine_elements(a, b):
+
+    elmap = load_elmap()
+
     try:
-        return elmap[tuple(sorted((a, b)))]
+        return elmap[tuple(sorted([a, b]))]
     except KeyError:
         return None
 

@@ -1,0 +1,16 @@
+lava=    earth+fire
+stone=    lava+ air
+sand=    stone+air
+sky=    air+ water
+dragon=    sky+ lizard
+lizard=    snake+ worm
+snake=    sand+ worm
+worm=    earth+ plankton
+plankton=    bacteria+ water
+bacteria=    life+ swamp
+swamp=    earth+ water
+life=    thunder+ water
+thunder=    fire+ air
+time=    sand+ glass
+glass=    fire+sand
+

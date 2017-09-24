@@ -1,0 +1,38 @@
+digraph "G" {
+/*
+    machine->refrigerator;
+    ice->refrigerator;
+
+    water->ice;
+    glass->ice;
+
+
+
+
+    metal->machine; box->machine;
+
+    fire->metal; stone->metal;
+
+    paper->box; glue->box;
+
+    wood->paper; water->paper;
+
+    grass->wood; sun->wood;
+
+    earth->grass; water->grass;
+
+    fire->sun; sky->sun;
+
+
+    sky->dragon; lizard->dragon;
+
+    stone->lizard; egg->lizard;
+
+    bird->egg;bird->egg;
+
+    air->bird; dinosaur->bird;
+*/
+
+
+
+}
