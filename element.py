@@ -85,8 +85,9 @@ class Element(AnimObject):
         super(Element, self).__init__(*a, **kw)
         self.imgsrc = "img/" + elname + ".png"
         self.layers = defs.NORMAL_LAYER
+        self.wizard = None #who carry element?
         if activate:
-            self.activated = True
+            self.activate()
 
     def __repr__(self):
         return "[E:%s id=%s]"%(self.elname, id(self))
@@ -106,6 +107,9 @@ class Element(AnimObject):
         self.joint = None
         self.space.remove(joint)
         del(joint)
+        if self.wizard:
+            self.wizard.num_carried_elements -= 1
+            self.wizard = None
 
     def collide_with_another(self, element, dt=None):
         if not element.activated or not self.activated:

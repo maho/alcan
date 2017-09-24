@@ -29,12 +29,17 @@ class PhysicsObject(object):
         cls.space.iterations = 60
         cls.space.gravity = defs.gravity
 
-        radius = 100
+        ra = 100
+        w, h = defs.map_size
 
-        cls.floor = Segment(cls.space.static_body, Vec2d(-1000, defs.floor_level - radius), Vec2d(5000, defs.floor_level - radius), radius)
-        cls.floor.elasticity = 0.6
-        cls.floor.friction = defs.friction
-        cls.space.add_static(cls.floor)
+        for x1,y1,x2,y2 in [(-100, defs.floor_level - ra, w + 100, defs.floor_level - ra),
+                            (-ra, w + 100, -ra, -100),
+                            (w + ra, w + 100, w + ra, -100)
+                           ]:
+            wall = Segment(cls.space.static_body, Vec2d(x1, y1), Vec2d(x2,y2), ra)
+            wall.elasticity = 0.6
+            wall.friction = defs.friction
+            cls.space.add_static(wall)
 
     @classmethod
     def update_space(cls):

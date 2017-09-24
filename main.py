@@ -2,12 +2,12 @@ from functools import partial
 from math import radians
 import random
 
-from cymunk import Body, Circle, PivotJoint, Segment, Space, Vec2d
+from cymunk import DampedSpring, PivotJoint, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
-from kivy.properties import NumericProperty, ObjectProperty
+from kivy.properties import ListProperty, NumericProperty, ObjectProperty
 from kivy.uix.widget import Widget
 
 from anim import AnimObject, PhysicsObject
@@ -15,11 +15,33 @@ import defs
 from element import Element
 
 
+class Baloon(AnimObject):
+
+    anchor = ListProperty([0, 0])
+
+    def __init__(self, object_to_follow, center):
+        super(Baloon, self).__init__(center=center)
+
+        self.object_to_follow = object_to_follow
+        self.anchor = self.object_to_follow.center
+
+    def add_body(self, dt=None):
+        super(Baloon, self).add_body(dt=dt)
+        if self.body:  # if obj is initialized yet
+            gx, gy = defs.gravity
+            self.body.apply_force((0, 8000))
+
+            joint = DampedSpring(self.body, self.object_to_follow.body,
+                                 tuple(self.pos),
+                                 tuple(self.object_to_follow.center),
+                                 130, 1.5, 0.3)
+            self.space.add(joint)
+
 
 class Cannon(AnimObject):
     collision_type = 2
     angle = NumericProperty(0)
-    offset = ObjectProperty((0,0))
+    offset = ObjectProperty((0, 0))
 
     def __init__(self, *args, **kwargs):
         super(Cannon, self).__init__(*args, **kwargs)
@@ -28,7 +50,6 @@ class Cannon(AnimObject):
         self.bullets = []
 
     def on_touch_move(self, touch):
-        #Logger.debug("touch=%r", touch)
         if abs(touch.dy) > abs(touch.dx):
             self.angle += touch.dy/2
 
@@ -74,6 +95,7 @@ class Wizard(AnimObject):
     def __init__(self, *a, **kw):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.layers = defs.NORMAL_LAYER
+        self.num_carried_elements = 0
 
     def carry_element(self, element, dt=None):
         #move element to "carried elements layer"
@@ -86,6 +108,10 @@ class Wizard(AnimObject):
         element.joint = PivotJoint(self.body, element.body, pivot)
         self.space.add(element.joint)
         self.parent.num_elements_in_zone -= 1
+        
+        self.num_carried_elements += 1
+        element.wizard = self
+        
 
     def add_body(self, dt=None):
         super(Wizard, self).add_body(dt=dt)
@@ -119,8 +145,8 @@ class AlcanGame(Widget, PhysicsObject):
         self.oo_to_add = []
         self.num_elements_in_zone = 0
 
-        self._keyboard = Window.request_keyboard(None, self)
-        self._keyboard.bind(on_key_down=self.on_keyboard)
+        from kivy.base import EventLoop
+        EventLoop.window.bind(on_key_down=self.on_keyboard),
 
         Clock.schedule_interval(self.update, 1.0/defs.fps)
 
@@ -128,6 +154,10 @@ class AlcanGame(Widget, PhysicsObject):
         self.space.add_collision_handler(Wizard.collision_type, Element.collision_type, self.wizard_vs_element)
         self.space.add_collision_handler(Element.collision_type, Cannon.collision_type, self.cannon_vs_element)
         self.space.add_collision_handler(Element.collision_type, Element.collision_type, self.element_vs_element)
+
+        Window.bind(on_resize=self.on_resize)
+
+        self.add_widget(Baloon(center=(500, 500), object_to_follow=self.wizard))
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to_add.append((oclass, oargs, okwargs))
@@ -155,6 +185,9 @@ class AlcanGame(Widget, PhysicsObject):
         if isinstance(wizard, Element):
             wizard, element = element, wizard
 
+        if wizard.num_carried_elements > 0:
+            return True
+
         Clock.schedule_once(partial(wizard.carry_element, element))
 
     def cannon_vs_element(self, space, arbiter):
@@ -172,9 +205,11 @@ class AlcanGame(Widget, PhysicsObject):
         return e1.collide_with_another(e2)
 
 
-    def on_keyboard(self, window, key, *largs):
-        #code = self._keyboard.keycode_to_string(key)
-        kid, code = key
+    def on_keyboard(self, window, key, *largs, **kwargs):
+       
+        #very dirty hack, but: we don't have any instance of keyboard anywhere, and
+        # keycode_to_string should be in fact classmethod, so passing None as self is safe
+        code = Keyboard.keycode_to_string(None, key)
 
         if code == 'left':
             self.wizard.move_left()
@@ -189,12 +224,23 @@ class AlcanGame(Widget, PhysicsObject):
         else:
             print("unknown code=",code)
 
+    def on_resize(self, win, w, h):
+        mw, mh = defs.map_size
+        xratio = w/mw
+        yratio = h/mh
+
+        self.scale = min(xratio, yratio)
+
     def update(self, dt):
         self.update_space()
 
         mi, ma = defs.num_elements_in_zone
         n = self.num_elements_in_zone
-        if (random.random() < defs.drop_chance or n < mi) and n < ma:
+        if n < mi:
+            Logger.debug("drop because num elements is below %s", mi)
+            self.drop_element()
+
+        if random.random() < defs.drop_chance  and n < ma:
             self.drop_element()
 
         for o in self.children:
