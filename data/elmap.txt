@@ -1,7 +1,8 @@
 lava=    earth+fire
 stone=    lava+ air
 sand=    stone+air
-sky=    air+ water
+sky=    air + steam
+steam = water + fire
 dragon=    sky+ lizard
 lizard=    snake+ worm
 snake=    sand+ worm

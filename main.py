@@ -52,6 +52,7 @@ class Cannon(AnimObject):
             x.unjoint()
             x.body.apply_impulse(impulse)
             x.shape.layers = defs.NORMAL_LAYER
+            x.activate()
         self.bullets = []
 
 
@@ -171,7 +172,8 @@ class AlcanGame(Widget, PhysicsObject):
     def element_vs_element(self, space, arbiter):
         e1, e2 = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
-        Clock.schedule_once(partial(e1.collide_with_another,e2))
+        #Clock.schedule_once(partial(e1.collide_with_another,e2))
+        return e1.collide_with_another(e2)
 
 
     def on_keyboard(self, window, key, *largs):

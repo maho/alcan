@@ -17,9 +17,10 @@ mintouchdist = 100
 
 map_size = (1350, 720)
 
-drop_chance = 0.01
+drop_chance = 0.005
 drop_zone = (0, 400)
 num_elements_in_zone = (1,5)
+explode_when_nocomb = True #explode elements when they make impossible combination
 
 #constants
 

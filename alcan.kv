@@ -13,8 +13,18 @@
 <Element>:
     size: 40, 40
     imgsrc: None
+    activated: False
 
     canvas:
+
+        Color:
+            rgb: (0.8, 1.0, 0.9, 0.5) if root.activated else (1.0, 1.0, 1.0, 1.0)
+
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+
         Rectangle:
             pos: self.pos
             size: self.size
