@@ -18,7 +18,7 @@
     canvas:
 
         Color:
-            rgb: (0.8, 1.0, 0.9, 0.5) if root.activated else (1.0, 1.0, 1.0, 1.0)
+            rgb: (0.8, 1.0, 0.9, 0.3) if root.activated else (1.0, 1.0, 1.0, 1.0)
 
         Ellipse:
             pos: self.pos
@@ -63,20 +63,27 @@
 <Baloon>:
     canvas:
         Color:
-            rgb: (0.5, 0.5, 0.5, 1.0)
-        Rectangle: 
+            rgb: 0,0,0
+        Line:
+            width: 3
+            ellipse: root.pos + root.size
+        Line:
+            points: [root.center[0] - 8, root.center[1] + 8] + root.anchor 
+            width: 2
+        Color:
+            rgb: (1, 1, 1)
+        Ellipse: 
             pos: root.pos
             size: root.size
-        Line:
-            points: [root.center[0] - 3, root.center[1] + 3] + root.anchor + [root.center[0] + 3, root.center[1] - 3]
-            width: 3
 
     anchor: (0, 0)
+    text: "..."
 
     Label:
         size: root.size
         pos: root.pos
-        text: "hello"
+        text: root.text
+        color: 0,0,0,1
 
 
 <AlcanGame>:

@@ -2,40 +2,18 @@ from functools import partial
 from math import radians
 import random
 
-from cymunk import DampedSpring, PivotJoint, Vec2d
+from cymunk import PivotJoint, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
-from kivy.properties import ListProperty, NumericProperty, ObjectProperty
+from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.widget import Widget
 
 from anim import AnimObject, PhysicsObject
+from baloon import Baloon
 import defs
 from element import Element
-
-
-class Baloon(AnimObject):
-
-    anchor = ListProperty([0, 0])
-
-    def __init__(self, object_to_follow, center):
-        super(Baloon, self).__init__(center=center)
-
-        self.object_to_follow = object_to_follow
-        self.anchor = self.object_to_follow.center
-
-    def add_body(self, dt=None):
-        super(Baloon, self).add_body(dt=dt)
-        if self.body:  # if obj is initialized yet
-            gx, gy = defs.gravity
-            self.body.apply_force((0, 8000))
-
-            joint = DampedSpring(self.body, self.object_to_follow.body,
-                                 tuple(self.pos),
-                                 tuple(self.object_to_follow.center),
-                                 130, 1.5, 0.3)
-            self.space.add(joint)
 
 
 class Cannon(AnimObject):
@@ -64,10 +42,10 @@ class Cannon(AnimObject):
         return shape
 
     def carry_element(self, element, dt=None):
-        #unbind joint from element
+        # unbind joint from element
         element.unjoint()
-        
-        #move it to center of cannon
+
+        # move it to center of cannon
         pivot = self.body.position + Vec2d(self.offset)
         element.body.position = pivot
         element.joint = PivotJoint(self.body, element.body, pivot)
@@ -86,8 +64,6 @@ class Cannon(AnimObject):
         self.bullets = []
 
 
-
-
 class Wizard(AnimObject):
 
     collision_type = 3
@@ -98,28 +74,27 @@ class Wizard(AnimObject):
         self.num_carried_elements = 0
 
     def carry_element(self, element, dt=None):
-        #move element to "carried elements layer"
+        # move element to "carried elements layer"
         element.shape.layers = defs.CARRIED_THINGS_LAYER
 
-        #bind it to wizard
-        ##move element up
+        # bind it to wizard
+        # #move element up
         pivot = self.body.position + Vec2d(defs.wizard_hand)
         element.body.position = pivot
         element.joint = PivotJoint(self.body, element.body, pivot)
         self.space.add(element.joint)
         self.parent.num_elements_in_zone -= 1
-        
+
         self.num_carried_elements += 1
         element.wizard = self
-        
 
     def add_body(self, dt=None):
         super(Wizard, self).add_body(dt=dt)
-        if self.body: #if obj is initialized ye
+        if self.body:  # if obj is initialized ye
             self.body.velocity_limit = defs.wizard_max_speed
 
     def on_touch_move(self, touch):
-        #Logger.debug("touch=%r", touch)
+        # Logger.debug("touch=%r", touch)
         if abs(touch.dx) > abs(touch.dy):
             if touch.dx > 0:
                 self.move_right()
@@ -134,9 +109,10 @@ class Wizard(AnimObject):
 
         self.body.apply_impulse((ix*-1, iy))
 
+
 class AlcanGame(Widget, PhysicsObject):
     def __init__(self, *args, **kwargs):
-    
+
         Window.size = defs.map_size
 
         super(AlcanGame, self).__init__(*args, **kwargs)
@@ -150,14 +126,25 @@ class AlcanGame(Widget, PhysicsObject):
 
         Clock.schedule_interval(self.update, 1.0/defs.fps)
 
-        #collision handlers
-        self.space.add_collision_handler(Wizard.collision_type, Element.collision_type, self.wizard_vs_element)
-        self.space.add_collision_handler(Element.collision_type, Cannon.collision_type, self.cannon_vs_element)
-        self.space.add_collision_handler(Element.collision_type, Element.collision_type, self.element_vs_element)
+        # collision handlers
+        self.space.add_collision_handler(Wizard.collision_type,
+                                         Element.collision_type,
+                                         self.wizard_vs_element)
+        self.space.add_collision_handler(Element.collision_type,
+                                         Cannon.collision_type,
+                                         self.cannon_vs_element)
+        self.space.add_collision_handler(Element.collision_type,
+                                         Element.collision_type,
+                                         self.element_vs_element)
 
         Window.bind(on_resize=self.on_resize)
 
-        self.add_widget(Baloon(center=(500, 500), object_to_follow=self.wizard))
+        self.add_widget(Baloon(center=(300, 300), object_to_follow=self.wizard,
+                               text="Alchemist"))
+        Clock.schedule_once(lambda dt: self.add_widget(Baloon(center=(400, 300), size=(200, 50),
+                                                       object_to_follow=self.cannon,
+                                                       text="Large Elements Collider")),
+                            3)
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to_add.append((oclass, oargs, okwargs))
@@ -177,7 +164,6 @@ class AlcanGame(Widget, PhysicsObject):
         self.remove_obj(a)
         Bkwargs['center'] = a.center
         self.schedule_add_widget(BClass, *Bargs, **Bkwargs)
-
 
     def wizard_vs_element(self, space, arbiter):
         wizard, element = [self.bodyobjects[s.body] for s in arbiter.shapes]
