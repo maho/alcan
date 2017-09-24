@@ -22,14 +22,15 @@ def load_elmap():
             a = g.group(2).strip()
             b = g.group(3).strip()
 
-            key = tuple(sorted([a,b]))
-            assert key not in load_elmap.data, "duplicate combination %s"%key
+            key = tuple(sorted([a, b]))
+            assert key not in load_elmap.data, "duplicate combination %s" % key
             load_elmap.data[key] = c
 
     return load_elmap.data
 
 
 load_elmap.data = {}
+
 
 def combine_elements(a, b):
 
@@ -41,9 +42,7 @@ def combine_elements(a, b):
         return None
 
 
-
 class Explosion(AnimObject):
-
 
     def __init__(self, *a, **kw):
         super(Explosion, self).__init__(*a, **kw)
@@ -51,25 +50,20 @@ class Explosion(AnimObject):
 
     def update(self, dt):
         if self.parent is None:
-            Logger.info("self=%s self.parent=%s self.frame=%s but parent is None", self, self.parent, self.frame)
+            Logger.info("self=%s self.parent=%s self.frame=%s but parent is None",
+                        self, self.parent, self.frame)
             return
         if self.frame > 5:
             self.parent.remove_obj(self)
             return
         self.frame += 1
 
-        #dirty hack, how to do it otherwise?
+        # dirty hack, how to do it otherwise?
         oldsize = sum(self.size)/2
         size = (100*(5 - self.frame) + 18*(self.frame-1))/4
         ds = oldsize - size
         self.size = (size, size)
         self.pos = Vector(self.pos) + (ds/2, ds/2)
-
-       
-
-
-
-
 
 
 class Element(AnimObject):
@@ -77,20 +71,24 @@ class Element(AnimObject):
     # is activated when shooted, and then it combine with other element
     activated = BooleanProperty(False)
 
-    #available_elnames = {'water', 'fire'}
     available_elnames = {'water', 'air', 'earth', 'fire'}
+    shown_baloons = set()
 
     def __init__(self, elname, *a, mass=50, momentum=10, activate=False, **kw):
         self.elname = elname
         super(Element, self).__init__(*a, **kw)
         self.imgsrc = "img/" + elname + ".png"
         self.layers = defs.NORMAL_LAYER
-        self.wizard = None #who carry element?
+        self.wizard = None  # who carry element?
         if activate:
             self.activate()
 
+        # if elname not in self.shown_baloons:
+        #     self.shown_baloons.add(elname)
+        #     self.parent.add
+
     def __repr__(self):
-        return "[E:%s id=%s]"%(self.elname, id(self))
+        return "[E:%s id=%s]" % (self.elname, id(self))
 
     def activate(self, dt=None, timeout=0.5):
         if timeout == 'now':
@@ -134,7 +132,8 @@ class Element(AnimObject):
 
     @classmethod
     def random(cls, **kwargs):
-        return Element(elname=choice(list(cls.available_elnames)), **kwargs)
+        elname = choice(list(cls.available_elnames))
+        return Element(elname=elname, **kwargs)
 
         
 
