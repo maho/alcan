@@ -1,21 +1,25 @@
+""" element (elementary ingredients of matter) and managing it """
+
 from functools import partial
 from random import choice
 import re
 
 from kivy.clock import Clock
 from kivy.logger import Logger
-from kivy.properties import BooleanProperty
+from kivy.properties import BooleanProperty, NumericProperty
 from kivy.vector import Vector
 
 from anim import AnimObject
 import defs
 
+
 def load_elmap():
+    """ load elmap from data/elmap.txt"""
     if load_elmap.data:
         return load_elmap.data
     with open("data/elmap.txt") as f:
         for line in f:
-            g = re.match("^(.*)=(.*)\+(.*)$", line)
+            g = re.match(r"^(.*)=(.*)\+(.*)$", line)
             if not g:
                 continue
             c = g.group(1).strip()
@@ -33,6 +37,8 @@ load_elmap.data = {}
 
 
 def combine_elements(a, b):
+    """ check in elmap, if (a,b) pair should generate
+        something else """
 
     elmap = load_elmap()
 
@@ -43,6 +49,9 @@ def combine_elements(a, b):
 
 
 class Explosion(AnimObject):
+    """ widget/object which shows explosion on the screen """
+
+    frame = NumericProperty(1)
 
     def __init__(self, *a, **kw):
         super(Explosion, self).__init__(*a, **kw)
@@ -67,6 +76,7 @@ class Explosion(AnimObject):
 
 
 class Element(AnimObject):
+    """ element object (water, fire ....) """
     collision_type = 1
     # is activated when shooted, and then it combine with other element
     activated = BooleanProperty(False)
@@ -74,12 +84,15 @@ class Element(AnimObject):
     available_elnames = {'water', 'air', 'earth', 'fire'}
     shown_baloons = set()
 
-    def __init__(self, elname, *a, mass=50, momentum=10, activate=False, **kw):
+    def __init__(self, elname, *a, activate=False, **kw):
         self.elname = elname
         super(Element, self).__init__(*a, **kw)
+
         self.imgsrc = "img/" + elname + ".png"
         self.layers = defs.NORMAL_LAYER
         self.wizard = None  # who carry element?
+        self.joint = None
+
         if activate:
             self.activate()
 
@@ -90,9 +103,19 @@ class Element(AnimObject):
     def __repr__(self):
         return "[E:%s id=%s]" % (self.elname, id(self))
 
+    def on_body_init(self):
+        assert self.parent is not None
+        if self.elname not in self.shown_baloons:
+            self.shown_baloons.add(self.elname)
+            self.show_baloon(self.elname)
+
     def activate(self, dt=None, timeout=0.5):
+        """ make it green and ready to react with other element """
         if timeout == 'now':
             self.activated = True
+            if 'activation' not in self.shown_baloons:
+                self.shown_baloons.add('activation')
+                self.show_baloon('activated \nready to reaction', size=(150,80))
             return
 
         Clock.schedule_once(partial(self.activate, timeout='now'), timeout)
@@ -134,7 +157,3 @@ class Element(AnimObject):
     def random(cls, **kwargs):
         elname = choice(list(cls.available_elnames))
         return Element(elname=elname, **kwargs)
-
-        
-
-

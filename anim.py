@@ -1,6 +1,6 @@
 from cymunk import Body, Circle, Space, Segment, Vec2d
 from kivy.clock import Clock
-from kivy.properties import NumericProperty, ObjectProperty
+from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
 import defs
@@ -14,8 +14,6 @@ class PhysicsObject(object):
 
     mass = NumericProperty(10, allownone=True)
     momentum = NumericProperty('INF', allownone=True)
-
-
 
     def __init__(self):
         if self.space is None:
@@ -32,11 +30,11 @@ class PhysicsObject(object):
         ra = 100
         w, h = defs.map_size
 
-        for x1,y1,x2,y2 in [(-100, defs.floor_level - ra, w + 100, defs.floor_level - ra),
-                            (-ra, w + 100, -ra, -100),
-                            (w + ra, w + 100, w + ra, -100)
-                           ]:
-            wall = Segment(cls.space.static_body, Vec2d(x1, y1), Vec2d(x2,y2), ra)
+        for x1, y1, x2, y2 in [(-100, defs.floor_level - ra, w + 100, defs.floor_level - ra),
+                               (-ra, w + 100, -ra, -100),
+                               (w + ra, w + 100, w + ra, -100)
+                               ]:
+            wall = Segment(cls.space.static_body, Vec2d(x1, y1), Vec2d(x2, y2), ra)
             wall.elasticity = 0.6
             wall.friction = defs.friction
             cls.space.add_static(wall)
@@ -58,9 +56,17 @@ class PhysicsObject(object):
 
         self.bodyobjects[self.body] = self
 
+        self.on_body_init()
+
     def update_to_body(self):
+        """
+            update widget position to body position
+        """
         p = self.body.position
         self.center = tuple(p)
+
+    def on_body_init(self):
+        """ called when body is finally set up """
 
 #        if self.center_y < defs.kill_level:
 #            self.out_of_bounds()
@@ -70,9 +76,6 @@ class PhysicsObject(object):
 #        self.space.remove(self.body)
 #        self.space.remove(self.shape)
 #        self.parent.remove_widget(self)
-
-        
-
 
 
 class AnimObject(Widget, PhysicsObject):
@@ -88,8 +91,8 @@ class AnimObject(Widget, PhysicsObject):
 
     def add_body(self, dt=None):
 
-        if not self.parent: #object not initialized yet
-            #call myself in next frame, 
+        if not self.parent:  # object not initialized yet
+            # call myself in next frame, 
             Clock.schedule_once(self.add_body)
             return
 
@@ -105,7 +108,7 @@ class AnimObject(Widget, PhysicsObject):
 
     def create_shape(self):
         sx, sy = self.size
-        radius = (sx + sy)/4 #half of avg
+        radius = (sx + sy)/4  # half of avg
         shape = Circle(self.body, radius)
         shape.elasticity = 0.6
         shape.friction = defs.friction
@@ -114,6 +117,15 @@ class AnimObject(Widget, PhysicsObject):
             shape.layers = self.layers
 
         return shape
+
+    def show_baloon(self, text, **kwargs):
+        from baloon import Baloon
+        px, py = self.pos
+        if py > 400:
+            py == 400
+        self.parent.add_widget(
+            Baloon(self, (px, py + 200), text, **kwargs)
+        )
 
     def update(self, dt):
         pass

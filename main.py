@@ -177,23 +177,24 @@ class AlcanGame(Widget, PhysicsObject):
         Clock.schedule_once(partial(wizard.carry_element, element))
 
     def cannon_vs_element(self, space, arbiter):
-        cannon, element = [ self.bodyobjects[s.body] for s in arbiter.shapes ]
+        cannon, element = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
         if isinstance(cannon, Element):
             cannon, element = element, cannon
 
-        Clock.schedule_once(partial(cannon.carry_element, element))
+        if cannon.bullets:
+            return True  # cannot hold more than one bullet
+
+        return Clock.schedule_once(partial(cannon.carry_element, element))
 
     def element_vs_element(self, space, arbiter):
         e1, e2 = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
-        #Clock.schedule_once(partial(e1.collide_with_another,e2))
+        # Clock.schedule_once(partial(e1.collide_with_another,e2))
         return e1.collide_with_another(e2)
 
-
     def on_keyboard(self, window, key, *largs, **kwargs):
-       
-        #very dirty hack, but: we don't have any instance of keyboard anywhere, and
+        # very dirty hack, but: we don't have any instance of keyboard anywhere, and
         # keycode_to_string should be in fact classmethod, so passing None as self is safe
         code = Keyboard.keycode_to_string(None, key)
 

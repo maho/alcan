@@ -21,7 +21,7 @@ map_size = (1350, 720)
 
 drop_chance = 0.002
 drop_zone = (0, 400)
-num_elements_in_zone = (0, 5)
+num_elements_in_zone = (1, 5)
 explode_when_nocomb = True  # explode elements when they make impossible combination
 
 # constants
