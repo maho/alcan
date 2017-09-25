@@ -111,6 +111,9 @@ class Wizard(AnimObject):
 
 
 class AlcanGame(Widget, PhysicsObject):
+
+    bfs = NumericProperty('inf')
+
     def __init__(self, *args, **kwargs):
 
         Window.size = defs.map_size
@@ -145,6 +148,8 @@ class AlcanGame(Widget, PhysicsObject):
                                                        object_to_follow=self.cannon,
                                                        text="Large Elements Collider")),
                             3)
+
+        self.bfs = Element.steps_to_reach()
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to_add.append((oclass, oargs, okwargs))
@@ -208,8 +213,6 @@ class AlcanGame(Widget, PhysicsObject):
             self.cannon.angle -= 3
         elif code == 'spacebar':
             self.cannon.shoot()
-        else:
-            print("unknown code=",code)
 
     def on_resize(self, win, w, h):
         mw, mh = defs.map_size
@@ -227,7 +230,7 @@ class AlcanGame(Widget, PhysicsObject):
             Logger.debug("drop because num elements is below %s", mi)
             self.drop_element()
 
-        if random.random() < defs.drop_chance  and n < ma:
+        if random.random() < defs.drop_chance and n < ma:
             self.drop_element()
 
         for o in self.children:
@@ -250,13 +253,12 @@ class AlcanGame(Widget, PhysicsObject):
         """ drop element from heaven """
         w, h = self.size
 
-        #get proper x coordinate
+        # get proper x coordinate
         x = random.randint(*defs.drop_zone)
 
         element = Element.random(center=(x, h))
         self.add_widget(element)
         self.num_elements_in_zone += 1
-
 
 
 class AlcanApp(App):

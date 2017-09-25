@@ -122,11 +122,12 @@ class AnimObject(Widget, PhysicsObject):
         from baloon import Baloon
         px, py = self.pos
         if py > 400:
-            py == 400
+            py = 400
+        else:
+            py += 200
         self.parent.add_widget(
-            Baloon(self, (px, py + 200), text, **kwargs)
+            Baloon(self, (px, py), text, **kwargs)
         )
 
     def update(self, dt):
         pass
-

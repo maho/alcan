@@ -18,7 +18,7 @@
     canvas:
 
         Color:
-            rgb: (0.8, 1.0, 0.9, 0.3) if root.activated else (1.0, 1.0, 1.0, 1.0)
+            rgba: (0.8, 1.0, 0.9, 0.3) if root.activated else (1.0, 1.0, 1.0, 1.0)
 
         Ellipse:
             pos: self.pos
@@ -63,7 +63,7 @@
 <Baloon>:
     canvas:
         Color:
-            rgb: 0,0,0
+            rgba: 0,0,0, 0.5
         Line:
             width: 3
             ellipse: root.pos + root.size
@@ -71,7 +71,7 @@
             points: [root.center[0] - 8, root.center[1] + 8] + root.anchor 
             width: 2
         Color:
-            rgb: (1, 1, 1)
+            rgba: (1, 1, 1, 1)
         Ellipse: 
             pos: root.pos
             size: root.size
@@ -100,6 +100,24 @@
     wizard: wizard
     cannon: cannon
     scale: 1.0
+    bfs: 'inf'
+
+    FloatLayout:
+        pos: root.pos
+        size: root.size
+        size_hint: None, None 
+
+        StackLayout:
+            pos: self.parent.pos
+            size: self.parent.size
+            size_hint: None, None 
+            
+            Label: 
+                text: "Steps to invent dragon: %s"%root.bfs
+                size_hint: None, None
+                size: 300, 50
+            
+
 
 
     Cannon:
@@ -111,3 +129,6 @@
     Wizard:
         id: wizard
         pos: 300, 100
+
+<Label>:
+    color: (0, 0, 0, 1)

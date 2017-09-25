@@ -10,6 +10,7 @@ from kivy.properties import BooleanProperty, NumericProperty
 from kivy.vector import Vector
 
 from anim import AnimObject
+import bfs
 import defs
 
 
@@ -108,6 +109,7 @@ class Element(AnimObject):
         if self.elname not in self.shown_baloons:
             self.shown_baloons.add(self.elname)
             self.show_baloon(self.elname)
+            self.parent.bfs = self.steps_to_reach()
 
     def activate(self, dt=None, timeout=0.5):
         """ make it green and ready to react with other element """
@@ -115,7 +117,7 @@ class Element(AnimObject):
             self.activated = True
             if 'activation' not in self.shown_baloons:
                 self.shown_baloons.add('activation')
-                self.show_baloon('activated \nready to reaction', size=(150,80))
+                self.show_baloon('activated \nready to reaction', size=(150, 80))
             return
 
         Clock.schedule_once(partial(self.activate, timeout='now'), timeout)
@@ -157,3 +159,7 @@ class Element(AnimObject):
     def random(cls, **kwargs):
         elname = choice(list(cls.available_elnames))
         return Element(elname=elname, **kwargs)
+
+    @classmethod
+    def steps_to_reach(cls):
+        return bfs.bfs(cls.available_elnames, 'dragon')
