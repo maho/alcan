@@ -11,3 +11,13 @@
 
     "Pomóż im uzyskać smoka"
 
+6. podpowiedź w zależności od poziomu trudności
+
+7. podwójne kliknięcie niech wyrzuca niesioną piłkę
+
+8. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
+
+9. 
+
+
+

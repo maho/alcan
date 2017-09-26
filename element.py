@@ -83,6 +83,7 @@ class Element(AnimObject):
     activated = BooleanProperty(False)
 
     available_elnames = {'water', 'air', 'earth', 'fire'}
+    present_elnames = []
     shown_baloons = set()
 
     def __init__(self, elname, *a, activate=False, **kw):
@@ -93,13 +94,12 @@ class Element(AnimObject):
         self.layers = defs.NORMAL_LAYER
         self.wizard = None  # who carry element?
         self.joint = None
+        self.released_at = -1
 
         if activate:
             self.activate()
 
-        # if elname not in self.shown_baloons:
-        #     self.shown_baloons.add(elname)
-        #     self.parent.add
+        self.present_elnames.append(elname)
 
     def __repr__(self):
         return "[E:%s id=%s]" % (self.elname, id(self))
@@ -111,10 +111,14 @@ class Element(AnimObject):
             self.show_baloon(self.elname)
             self.parent.bfs = self.steps_to_reach()
 
-    def activate(self, dt=None, timeout=0.5):
+    def before_removing(self):
+        self.present_elnames.remove(self.elname)
+
+    def activate(self, __dt=None, timeout=0.5):
         """ make it green and ready to react with other element """
         if timeout == 'now':
             self.activated = True
+            self.shape.layers = defs.NORMAL_LAYER
             if 'activation' not in self.shown_baloons:
                 self.shown_baloons.add('activation')
                 self.show_baloon('activated \nready to reaction', size=(150, 80))
@@ -129,12 +133,15 @@ class Element(AnimObject):
         joint = self.joint
         self.joint = None
         self.space.remove(joint)
-        del(joint)
+        del joint
         if self.wizard:
-            self.wizard.num_carried_elements -= 1
+            self.wizard.carried_elements.remove(self)
             self.wizard = None
 
-    def collide_with_another(self, element, dt=None):
+    def collide_with_another(self, element, __dt=None):
+        """ collide with another element. Generate combination, or explosion
+            or bounce (return True)
+        """
         if not element.activated or not self.activated:
             return True
 
@@ -157,9 +164,14 @@ class Element(AnimObject):
 
     @classmethod
     def random(cls, **kwargs):
-        elname = choice(list(cls.available_elnames))
-        return Element(elname=elname, **kwargs)
+        """ generate random element from available """
+        try:
+            elname = choice(list(cls.available_elnames - set(cls.present_elnames)))
+            return Element(elname=elname, **kwargs)
+        except IndexError:
+            return None
 
     @classmethod
     def steps_to_reach(cls):
+        """ how many inventions neccessary to reach dragon """
         return bfs.bfs(cls.available_elnames, 'dragon')

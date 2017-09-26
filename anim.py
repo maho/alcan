@@ -79,12 +79,13 @@ class PhysicsObject(object):
 
 
 class AnimObject(Widget, PhysicsObject):
+    """ base object for all animated objects in game """
 
     collision_type = NumericProperty(0)
 
     def __init__(self, *args, **kwargs):
         super(AnimObject, self).__init__(*args, **kwargs)
-        
+
         self.body = None
         self.layers = None
         self.add_body()
@@ -92,7 +93,7 @@ class AnimObject(Widget, PhysicsObject):
     def add_body(self, dt=None):
 
         if not self.parent:  # object not initialized yet
-            # call myself in next frame, 
+            # call myself in next frame,
             Clock.schedule_once(self.add_body)
             return
 
@@ -117,6 +118,10 @@ class AnimObject(Widget, PhysicsObject):
             shape.layers = self.layers
 
         return shape
+
+    def before_removing(self):
+        """ method called before removing by parent """
+        pass
 
     def show_baloon(self, text, **kwargs):
         from baloon import Baloon

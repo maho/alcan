@@ -1,6 +1,7 @@
 from functools import partial
 from math import radians
 import random
+import time
 
 from cymunk import PivotJoint, Vec2d
 from kivy.app import App
@@ -59,7 +60,7 @@ class Cannon(AnimObject):
         for x in self.bullets:
             x.unjoint()
             x.body.apply_impulse(impulse)
-            x.shape.layers = defs.NORMAL_LAYER
+            x.shape.layers = defs.SHOOTED_THINGS_LAYER
             x.activate()
         self.bullets = []
 
@@ -71,9 +72,11 @@ class Wizard(AnimObject):
     def __init__(self, *a, **kw):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.layers = defs.NORMAL_LAYER
-        self.num_carried_elements = 0
+        self.carried_elements = []
 
-    def carry_element(self, element, dt=None):
+    def carry_element(self, element, __dt=None):
+        if time.time() - element.released_at < 1.0:
+            return True
         # move element to "carried elements layer"
         element.shape.layers = defs.CARRIED_THINGS_LAYER
 
@@ -85,13 +88,18 @@ class Wizard(AnimObject):
         self.space.add(element.joint)
         self.parent.num_elements_in_zone -= 1
 
-        self.num_carried_elements += 1
+        self.carried_elements.append(element)
         element.wizard = self
 
     def add_body(self, dt=None):
         super(Wizard, self).add_body(dt=dt)
         if self.body:  # if obj is initialized ye
             self.body.velocity_limit = defs.wizard_max_speed
+
+    def create_shape(self):
+        shape = super(Wizard, self).create_shape()
+        shape.friction = defs.wizard_friction
+        return shape
 
     def on_touch_move(self, touch):
         # Logger.debug("touch=%r", touch)
@@ -109,6 +117,18 @@ class Wizard(AnimObject):
 
         self.body.apply_impulse((ix*-1, iy))
 
+    def release_element(self):
+        if not self.carried_elements:
+            return False
+        for x in self.carried_elements:
+            x.body.apply_impulse(defs.wizard_release_impulse)
+            x.unjoint()
+            x.shape.layers = defs.NORMAL_LAYER
+            x.released_at = time.time()
+
+        self.carried_elements = []
+        return True
+
 
 class AlcanGame(Widget, PhysicsObject):
 
@@ -125,7 +145,7 @@ class AlcanGame(Widget, PhysicsObject):
         self.num_elements_in_zone = 0
 
         from kivy.base import EventLoop
-        EventLoop.window.bind(on_key_down=self.on_keyboard),
+        EventLoop.window.bind(on_key_down=self.on_keyboard)
 
         Clock.schedule_interval(self.update, 1.0/defs.fps)
 
@@ -160,6 +180,7 @@ class AlcanGame(Widget, PhysicsObject):
             self.oo_to_remove.add(obj)
             return
         Logger.info("game: remove object obj=%s", obj)
+        obj.before_removing()
         self.space.remove(obj.body)
         self.space.remove(obj.shape)
         self.remove_widget(obj)
@@ -170,13 +191,14 @@ class AlcanGame(Widget, PhysicsObject):
         Bkwargs['center'] = a.center
         self.schedule_add_widget(BClass, *Bargs, **Bkwargs)
 
-    def wizard_vs_element(self, space, arbiter):
+    def wizard_vs_element(self, __space, arbiter):
+        """ collision handler - wizard vs element """
         wizard, element = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
         if isinstance(wizard, Element):
             wizard, element = element, wizard
 
-        if wizard.num_carried_elements > 0:
+        if wizard.carried_elements:
             return True
 
         Clock.schedule_once(partial(wizard.carry_element, element))
@@ -212,7 +234,8 @@ class AlcanGame(Widget, PhysicsObject):
         elif code == 'down':
             self.cannon.angle -= 3
         elif code == 'spacebar':
-            self.cannon.shoot()
+            if not self.wizard.release_element():
+                self.cannon.shoot()
 
     def on_resize(self, win, w, h):
         mw, mh = defs.map_size
@@ -257,6 +280,8 @@ class AlcanGame(Widget, PhysicsObject):
         x = random.randint(*defs.drop_zone)
 
         element = Element.random(center=(x, h))
+        if not element:
+            return
         self.add_widget(element)
         self.num_elements_in_zone += 1
 
