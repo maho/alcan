@@ -3,16 +3,17 @@
 fps = 20
 
 gravity = (0, -700)
+baloon_force = (0, 7500)
 
 friction = 0.3
 floor_level = 50
 kill_level = -1000
 
 wizard_mass = 100
-wizard_impulse = (9000, 2000)
+wizard_force = 100000
 wizard_hand = (30, -20)  # offset from center, where wizard carry things
-wizard_max_speed = 240
-wizard_friction = 1.1
+wizard_max_speed = 400
+wizard_friction = 2
 wizard_release_impulse = (100, 1900)
 
 shoot_force = 7000

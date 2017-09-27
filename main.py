@@ -1,5 +1,6 @@
 from functools import partial
 from math import radians
+import os
 import random
 import time
 
@@ -28,21 +29,13 @@ class Cannon(AnimObject):
 
         self.bullets = []
 
-    def on_touch_move(self, touch):
-        if abs(touch.dy) > abs(touch.dx):
-            self.angle += touch.dy/2
-
-    def on_touch_down(self, touch):
-        if touch.is_double_tap:
-            self.shoot()
-
     def create_shape(self):
         """ make cannon a sensor """
         shape = super(Cannon, self).create_shape()
         shape.sensor = True
         return shape
 
-    def carry_element(self, element, dt=None):
+    def carry_element(self, element, __dt=None):
         # unbind joint from element
         element.unjoint()
 
@@ -73,6 +66,7 @@ class Wizard(AnimObject):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.layers = defs.NORMAL_LAYER
         self.carried_elements = []
+        self.applied_force = Vec2d(0, 0)
 
     def carry_element(self, element, __dt=None):
         if time.time() - element.released_at < 1.0:
@@ -101,32 +95,32 @@ class Wizard(AnimObject):
         shape.friction = defs.wizard_friction
         return shape
 
-    def on_touch_move(self, touch):
-        # Logger.debug("touch=%r", touch)
-        if abs(touch.dx) > abs(touch.dy):
-            if touch.dx > 0:
-                self.move_right()
-            else:
-                self.move_left()
-
     def move_right(self):
-        self.body.apply_impulse(defs.wizard_impulse)
+        f = (defs.wizard_force, 0)
+        self.body.apply_force(f)
+        self.applied_force += f
+        Logger.debug("move_right, applied_force=%s", self.applied_force)
 
     def move_left(self):
-        ix, iy = defs.wizard_impulse
+        f = (-defs.wizard_force, 0)
+        self.body.apply_force(f)
+        self.applied_force += f
+        Logger.debug("move_left, applied_force=%s", self.applied_force)
 
-        self.body.apply_impulse((ix*-1, iy))
+    def stop_move(self):
+        self.body.apply_force((-self.applied_force.x, -self.applied_force.y))
+        self.applied_force = Vec2d(0, 0)
+        Logger.debug("stop move")
 
     def release_element(self):
         if not self.carried_elements:
             return False
-        for x in self.carried_elements:
+        for x in self.carried_elements[:]:
             x.body.apply_impulse(defs.wizard_release_impulse)
             x.unjoint()
             x.shape.layers = defs.NORMAL_LAYER
             x.released_at = time.time()
 
-        self.carried_elements = []
         return True
 
 
@@ -143,9 +137,10 @@ class AlcanGame(Widget, PhysicsObject):
         self.oo_to_remove = set()
         self.oo_to_add = []
         self.num_elements_in_zone = 0
+        self.keys_pressed = set()
 
         from kivy.base import EventLoop
-        EventLoop.window.bind(on_key_down=self.on_keyboard)
+        EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
         Clock.schedule_interval(self.update, 1.0/defs.fps)
 
@@ -174,7 +169,7 @@ class AlcanGame(Widget, PhysicsObject):
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to_add.append((oclass, oargs, okwargs))
 
-    def remove_obj(self, obj, dt=None, just_schedule=True):
+    def remove_obj(self, obj, __dt=None, just_schedule=True):
         if just_schedule:
             Logger.debug("game: schedule %s to be removed", obj)
             self.oo_to_remove.add(obj)
@@ -220,22 +215,66 @@ class AlcanGame(Widget, PhysicsObject):
         # Clock.schedule_once(partial(e1.collide_with_another,e2))
         return e1.collide_with_another(e2)
 
-    def on_keyboard(self, window, key, *largs, **kwargs):
+    def on_key_up(self, window, key, *largs, **kwargs):
+        code = Keyboard.keycode_to_string(None, key)
+
+        if code in ['left', 'right']:
+            self.wizard.stop_move()
+
+        self.keys_pressed.remove(code)
+
+    def on_key_down(self, window, key, *largs, **kwargs):
         # very dirty hack, but: we don't have any instance of keyboard anywhere, and
         # keycode_to_string should be in fact classmethod, so passing None as self is safe
         code = Keyboard.keycode_to_string(None, key)
 
-        if code == 'left':
-            self.wizard.move_left()
-        elif code == 'right':
-            self.wizard.move_right()
-        elif code == 'up':
-            self.cannon.angle += 3
-        elif code == 'down':
-            self.cannon.angle -= 3
-        elif code == 'spacebar':
+        if code not in self.keys_pressed:
+            if code == 'left':
+                self.wizard.move_left()
+            elif code == 'right':
+                self.wizard.move_right()
+
+        if code == 'spacebar':
             if not self.wizard.release_element():
                 self.cannon.shoot()
+        self.keys_pressed.add(code)
+
+    def on_touch_move(self, touch):
+        if touch.is_double_tap:
+            return
+        # emulate keys pressed
+
+        # posx, posy = touch.pos
+        # oposx, oposy = touch.opos
+        # dx, dy = posx - oposx, posy - oposy
+        dx, dy = touch.dx, touch.dy
+        Logger.debug("dx=%s, dy=%s", dx, dy)
+        if abs(dx) > abs(dy):
+            Logger.debug("horizontal")
+            if dx > 0:
+                self.wizard.move_right()
+            else:
+                self.wizard.move_left()
+
+        key = None
+        if abs(dy) > abs(dx):
+            Logger.debug("vertical")
+            if touch.dy > 0:
+                key = 'up'
+            else:
+                key = 'down'
+
+        if key:
+            Logger.debug("key=%s", key)
+            self.keys_pressed.add(key)
+
+    def on_touch_down(self, touch):
+        if touch.is_double_tap:
+            self.shoot()
+
+    def on_touch_up(self, touch):
+        self.keys_pressed.clear()
+        self.wizard.stop_move()
 
     def on_resize(self, win, w, h):
         mw, mh = defs.map_size
@@ -272,6 +311,11 @@ class AlcanGame(Widget, PhysicsObject):
             self.add_widget(newo)
         self.oo_to_add.clear()
 
+        if 'up' in self.keys_pressed:
+            self.cannon.angle += 1.5
+        if 'down' in self.keys_pressed:
+            self.cannon.angle -= 1.5
+
     def drop_element(self):
         """ drop element from heaven """
         w, h = self.size
@@ -292,4 +336,13 @@ class AlcanApp(App):
 
 
 if __name__ == '__main__':
+
+    if "DEBUG" in os.environ:
+        def debug_signal_handler(signal, frame):
+            import pudb
+            pudb.set_trace()
+
+        import signal
+        signal.signal(signal.SIGINT, debug_signal_handler)
+
     AlcanApp().run()

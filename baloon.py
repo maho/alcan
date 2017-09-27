@@ -25,7 +25,7 @@ class Baloon(AnimObject):
         super(Baloon, self).add_body(dt=dt)
         if self.body:  # if obj is initialized yet
             gx, gy = defs.gravity
-            self.body.apply_force((0, 7500))
+            self.body.apply_force(defs.baloon_force)
 
             self.joint = DampedSpring(self.body, self.object_to_follow.body,
                                       tuple(self.pos),
