@@ -95,23 +95,6 @@ class Wizard(AnimObject):
         shape.friction = defs.wizard_friction
         return shape
 
-    def move_right(self):
-        f = (defs.wizard_force, 0)
-        self.body.apply_force(f)
-        self.applied_force += f
-        Logger.debug("move_right, applied_force=%s", self.applied_force)
-
-    def move_left(self):
-        f = (-defs.wizard_force, 0)
-        self.body.apply_force(f)
-        self.applied_force += f
-        Logger.debug("move_left, applied_force=%s", self.applied_force)
-
-    def stop_move(self):
-        self.body.apply_force((-self.applied_force.x, -self.applied_force.y))
-        self.applied_force = Vec2d(0, 0)
-        Logger.debug("stop move")
-
     def release_element(self):
         if not self.carried_elements:
             return False
@@ -217,60 +200,36 @@ class AlcanGame(Widget, PhysicsObject):
 
     def on_key_up(self, window, key, *largs, **kwargs):
         code = Keyboard.keycode_to_string(None, key)
-
-        if code in ['left', 'right']:
-            self.wizard.stop_move()
-
         self.keys_pressed.remove(code)
 
     def on_key_down(self, window, key, *largs, **kwargs):
         # very dirty hack, but: we don't have any instance of keyboard anywhere, and
         # keycode_to_string should be in fact classmethod, so passing None as self is safe
         code = Keyboard.keycode_to_string(None, key)
-
-        if code not in self.keys_pressed:
-            if code == 'left':
-                self.wizard.move_left()
-            elif code == 'right':
-                self.wizard.move_right()
+        self.keys_pressed.add(code)
 
         if code == 'spacebar':
             if not self.wizard.release_element():
                 self.cannon.shoot()
-        self.keys_pressed.add(code)
 
     def on_touch_move(self, touch):
         if touch.is_double_tap:
             return
-        # emulate keys pressed
 
-        # posx, posy = touch.pos
-        # oposx, oposy = touch.opos
-        # dx, dy = posx - oposx, posy - oposy
         dx, dy = touch.dx, touch.dy
-        Logger.debug("dx=%s, dy=%s", dx, dy)
+        ix = defs.wizard_touch_impulse_x
         if abs(dx) > abs(dy):
             Logger.debug("horizontal")
-            if dx > 0:
-                self.wizard.move_right()
-            else:
-                self.wizard.move_left()
+            self.wizard.body.apply_impulse((ix * dx, 0))
 
-        key = None
         if abs(dy) > abs(dx):
             Logger.debug("vertical")
-            if touch.dy > 0:
-                key = 'up'
-            else:
-                key = 'down'
-
-        if key:
-            Logger.debug("key=%s", key)
-            self.keys_pressed.add(key)
+            self.cannon.angle += dy/2
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
-            self.shoot()
+            if not self.wizard.release_element():
+                self.cannon.shoot()
 
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
@@ -315,6 +274,14 @@ class AlcanGame(Widget, PhysicsObject):
             self.cannon.angle += 1.5
         if 'down' in self.keys_pressed:
             self.cannon.angle -= 1.5
+
+        dx = 0
+        if 'left' in self.keys_pressed:
+            dx -= 10
+        if 'right' in self.keys_pressed:
+            dx += 10
+        if dx:
+            self.wizard.body.apply_impulse((defs.wizard_touch_impulse_x * dx, 0))
 
     def drop_element(self):
         """ drop element from heaven """

@@ -10,10 +10,10 @@ floor_level = 50
 kill_level = -1000
 
 wizard_mass = 100
-wizard_force = 100000
+wizard_touch_impulse_x = 1000
 wizard_hand = (30, -20)  # offset from center, where wizard carry things
 wizard_max_speed = 400
-wizard_friction = 2
+wizard_friction = 4
 wizard_release_impulse = (100, 1900)
 
 shoot_force = 7000
