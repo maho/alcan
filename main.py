@@ -4,7 +4,7 @@ import os
 import random
 import time
 
-from cymunk import PivotJoint, Vec2d
+from cymunk import BoxShape, PivotJoint, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
@@ -18,9 +18,28 @@ import defs
 from element import Element
 
 
+class Beam(AnimObject):
+    pass
+
+
+class Platform(AnimObject):
+    angle = NumericProperty(0)
+
+    def create_shape(self):
+        sx, sy = self.size
+        shape = BoxShape(self.body, sx, sy)
+        shape.elasticity = 0.6
+        shape.friction = defs.friction
+        shape.collision_type = self.collision_type
+        if self.layers:
+            shape.layers = self.layers
+
+        return shape
+
+
 class Cannon(AnimObject):
     collision_type = 2
-    angle = NumericProperty(0)
+    aim = NumericProperty(0)
     offset = ObjectProperty((0, 0))
 
     def __init__(self, *args, **kwargs):
@@ -49,7 +68,7 @@ class Cannon(AnimObject):
 
     def shoot(self):
         impulse = Vec2d(0, defs.shoot_force)
-        impulse.rotate(radians(self.angle))
+        impulse.rotate(radians(self.aim))
         for x in self.bullets:
             x.unjoint()
             x.body.apply_impulse(impulse)
@@ -224,7 +243,7 @@ class AlcanGame(Widget, PhysicsObject):
 
         if abs(dy) > abs(dx):
             Logger.debug("vertical")
-            self.cannon.angle += dy/2
+            self.cannon.aim += dy/2
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
@@ -233,7 +252,6 @@ class AlcanGame(Widget, PhysicsObject):
 
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
-        self.wizard.stop_move()
 
     def on_resize(self, win, w, h):
         mw, mh = defs.map_size
@@ -241,6 +259,7 @@ class AlcanGame(Widget, PhysicsObject):
         yratio = h/mh
 
         self.scale = min(xratio, yratio)
+        Logger.debug("self.scale = %s", self.scale)
 
     def update(self, dt):
         self.update_space()
@@ -271,9 +290,9 @@ class AlcanGame(Widget, PhysicsObject):
         self.oo_to_add.clear()
 
         if 'up' in self.keys_pressed:
-            self.cannon.angle += 1.5
+            self.cannon.aim += 1.5
         if 'down' in self.keys_pressed:
-            self.cannon.angle -= 1.5
+            self.cannon.aim -= 1.5
 
         dx = 0
         if 'left' in self.keys_pressed:

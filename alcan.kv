@@ -1,5 +1,6 @@
 #:import defs defs
 #:import Vec2d cymunk.Vec2d
+#:import pi math.pi
 
 <Wizard>:
     size: 78, 98
@@ -18,29 +19,59 @@
     canvas:
 
         Color:
-            rgba: (0.8, 1.0, 0.9, 0.9) if root.activated else (1.0, 1.0, 1.0, 1.0)
+            rgba: (0.0, 0.9, 0.5, 1.0) if root.activated else (1.0, 1.0, 1.0, 1.0)
 
         Ellipse:
             pos: self.pos
             size: self.size
-
 
         Rectangle:
             pos: self.pos
             size: self.size
             source: root.imgsrc
 
+<Platform>:
+    size: 400, 20
+    angle: 0
+    momentum:  10**6
+    
+    canvas:
+
+        PushMatrix
+
+        Rotate:
+            angle: root.angle
+            origin: self.center
+            
+        Color: 
+            rgba: (0., 1., 1., 0.8)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+        PopMatrix
+
+<Beam>:
+    size: 50, 50
+    friction: 44
+
+    canvas:
+        Color:
+            rgba: (0., 1., 1.0, 0.8)
+        Ellipse:
+            pos: self.pos
+            size: self.size
 
 <Cannon>:
     size: 100, 100
-    angle: 0
+    aim: 0
 
     offset: 0, -25
 
     canvas:
         PushMatrix
         Rotate
-            angle: root.angle
+            angle: root.aim
             origin: Vec2d(self.center) + Vec2d(self.offset)
 
         Rectangle:
@@ -93,12 +124,14 @@
 <AlcanGame>:
     
     canvas:
-        Scale:
-            xyz: (root.scale, root.scale, root.scale)
+        #PushMatrix
+        #Scale:
+        #    xyz: (root.scale, root.scale, root.scale)
         Rectangle:
             pos: self.pos
             size: defs.map_size
             source: 'img/bg.jpg'
+        #PopMatrix
 
     wizard: wizard
     cannon: cannon
@@ -132,6 +165,16 @@
     Wizard:
         id: wizard
         pos: 300, 100
+
+    Platform:
+        pos: 850,100
+        mass: 100
+
+    Beam:
+        pos: 1020, 20
+    Beam:
+        pos: 1200, 20
+
 
 <Label>:
     color: (0, 0, 0, 1)

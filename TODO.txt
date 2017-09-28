@@ -1,7 +1,3 @@
-0. poprawić ruszanie się klawiaturą
-0.1. poprawić ruszanie się myszką
-0.3. poprawić ruszanie się palcem
-
 1. limit aktywowanych na powierzchni. Czy to za pomocą liczby, czy za pomocą jakiejś równoważni która może się przewrócić i katastrofa
 
 2. trudność polega na prawopodobieństwie wybuchu przy zetknięciu się niepasujących do siebie
@@ -21,7 +17,7 @@
 
 8. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
 
-9. 
+9. ikonka, splash 
 
 
 

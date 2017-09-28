@@ -1,5 +1,9 @@
+from itertools import cycle
+from math import degrees
+
 from cymunk import Body, Circle, Space, Segment, Vec2d
 from kivy.clock import Clock
+from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
@@ -14,6 +18,7 @@ class PhysicsObject(object):
 
     mass = NumericProperty(10, allownone=True)
     momentum = NumericProperty('INF', allownone=True)
+    friction = NumericProperty(defs.friction)
 
     def __init__(self):
         if self.space is None:
@@ -28,7 +33,7 @@ class PhysicsObject(object):
         cls.space.gravity = defs.gravity
 
         ra = 100
-        w, h = defs.map_size
+        w, __h = defs.map_size
 
         for x1, y1, x2, y2 in [(-100, defs.floor_level - ra, w + 100, defs.floor_level - ra),
                                (-ra, w + 100, -ra, -100),
@@ -43,10 +48,10 @@ class PhysicsObject(object):
     def update_space(cls):
         cls.space.step(1.0/20.0)
 
-        for b, o in cls.bodyobjects.items():
+        for __b, o in cls.bodyobjects.items():
             o.update_to_body()
 
-    def add_to_space(self, body, space):
+    def add_to_space(self, __body, space):
         space = self.space
 
         if self.mass is not None:
@@ -64,6 +69,10 @@ class PhysicsObject(object):
         """
         p = self.body.position
         self.center = tuple(p)
+
+        if hasattr(self, 'angle'):
+            ang = degrees(self.body.angle)
+            self.angle = ang
 
     def on_body_init(self):
         """ called when body is finally set up """
@@ -112,7 +121,7 @@ class AnimObject(Widget, PhysicsObject):
         radius = (sx + sy)/4  # half of avg
         shape = Circle(self.body, radius)
         shape.elasticity = 0.6
-        shape.friction = defs.friction
+        shape.friction = self.friction
         shape.collision_type = self.collision_type
         if self.layers:
             shape.layers = self.layers
