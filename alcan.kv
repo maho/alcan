@@ -2,6 +2,87 @@
 #:import Vec2d cymunk.Vec2d
 #:import pi math.pi
 
+<AlcanSM>
+    Screen:
+        name: 'main'
+        BoxLayout:
+            type: 'vertical'
+
+            Button:
+                text: 'easy'
+                on_press: root.play('easy')
+
+            Button:
+                text: 'hard'
+                on_press: root.play('hard')
+            
+    
+<AlcanGame>:
+    name: 'game'
+    canvas:
+        Scale:
+            xyz: (root.scale, root.scale, root.scale)
+        Rectangle:
+            pos: self.pos
+            size: defs.map_size
+            source: 'img/bg.jpg'
+
+    wizard: wizard
+    cannon: cannon
+    scale: 1.0
+    bfs: 'inf'
+
+    FloatLayout:
+        pos: root.pos
+        size: root.size
+        size_hint: None, None 
+
+        StackLayout:
+            pos: self.parent.pos
+            size: self.parent.size
+            size_hint: None, None 
+            
+            Label: 
+                text: "Steps to invent dragon: %s"%root.bfs
+                size_hint: None, None
+                size: 300, 50
+            
+
+
+
+    Cannon:
+        id: cannon
+        pos: 400, 100
+        mass: None
+        momentum: None 
+
+    Wizard:
+        id: wizard
+        pos: 300, 100
+
+    Platform:
+        center: 1000,150
+        size: 500, 45
+        mass: 100
+
+    Platform: 
+        pos: 0,-100
+        size: 500, 190
+        mass: None
+        momentum: None
+
+    Beam:
+        mass: None
+        momentum: None
+        center: 1000, 70
+    Beam:
+        mass: None
+        momentum: None
+        center: 1250, 70
+
+
+
+
 <GameOver>
     size: 800, 271
     angle: 0
@@ -138,68 +219,6 @@
         color: 0,0,0,1
 
 
-<AlcanGame>:
-    
-    canvas:
-        Scale:
-            xyz: (root.scale, root.scale, root.scale)
-        Rectangle:
-            pos: self.pos
-            size: defs.map_size
-            source: 'img/bg.jpg'
-
-    wizard: wizard
-    cannon: cannon
-    scale: 1.0
-    bfs: 'inf'
-
-    FloatLayout:
-        pos: root.pos
-        size: root.size
-        size_hint: None, None 
-
-        StackLayout:
-            pos: self.parent.pos
-            size: self.parent.size
-            size_hint: None, None 
-            
-            Label: 
-                text: "Steps to invent dragon: %s"%root.bfs
-                size_hint: None, None
-                size: 300, 50
-            
-
-
-
-    Cannon:
-        id: cannon
-        pos: 400, 100
-        mass: None
-        momentum: None 
-
-    Wizard:
-        id: wizard
-        pos: 300, 100
-
-    Platform:
-        center: 1000,150
-        size: 500, 45
-        mass: 100
-
-    Platform: 
-        pos: 0,-100
-        size: 500, 190
-        mass: None
-        momentum: None
-
-    Beam:
-        mass: None
-        momentum: None
-        center: 1000, 70
-    Beam:
-        mass: None
-        momentum: None
-        center: 1250, 70
 
 
 <Label>:

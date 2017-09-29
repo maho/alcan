@@ -1,43 +1,9 @@
-from functools import partial
-from math import radians
-import os
-import random
 import time
 
-from cymunk import BoxShape, PivotJoint, Vec2d
-from kivy.app import App
-from kivy.clock import Clock
-from kivy.core.window import Keyboard, Window
-from kivy.logger import Logger
-from kivy.properties import NumericProperty, ObjectProperty
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.widget import Widget
+from cymunk import PivotJoint, Vec2d
 
-from alcangame import AlcanGame
-from anim import AnimObject, PhysicsObject
-from baloon import Baloon
+from anim import AnimObject
 import defs
-from element import Element
-from oninitmixin import OnInitMixin
-
-
-class Beam(AnimObject):
-    pass
-
-
-class Platform(AnimObject):
-    angle = NumericProperty(0)
-
-    def create_shape(self):
-        sx, sy = self.size
-        shape = BoxShape(self.body, sx, sy)
-        shape.elasticity = 0.6
-        shape.friction = defs.friction
-        shape.collision_type = self.collision_type
-        shape.layers = defs.NORMAL_LAYER
-
-        return shape
-
 
 
 class Wizard(AnimObject):
@@ -87,25 +53,3 @@ class Wizard(AnimObject):
             x.released_at = time.time()
 
         return True
-
-class AlcanSM(ScreenManager):
-    
-    def play(self, level):
-        self.switch_to(AlcanGame())
-
-class AlcanApp(App):
-    def build(self):
-        return AlcanSM()
-
-
-if __name__ == '__main__':
-
-    if "DEBUG" in os.environ:
-        def debug_signal_handler(signal, frame):
-            import pudb
-            pudb.set_trace()
-
-        import signal
-        signal.signal(signal.SIGINT, debug_signal_handler)
-
-    AlcanApp().run()
