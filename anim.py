@@ -1,9 +1,7 @@
-from itertools import cycle
 from math import degrees
 
 from cymunk import Body, Circle, Space, Segment, Vec2d
 from kivy.clock import Clock
-from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
@@ -29,19 +27,21 @@ class PhysicsObject(object):
         """ instead of using space as global variable """
         cls = PhysicsObject
         cls.space = Space()
-        cls.space.iterations = 60
+        cls.space.iterations = 2
         cls.space.gravity = defs.gravity
 
         ra = 100
-        w, __h = defs.map_size
+        w, h = defs.map_size
 
-        for x1, y1, x2, y2 in [(-100, defs.floor_level - ra, w + 100, defs.floor_level - ra),
-                               (-ra, w + 100, -ra, -100),
-                               (w + ra, w + 100, w + ra, -100)
-                               ]:
+        for x1, y1, x2, y2, ct in [
+                (-100, defs.floor_level - ra, w + 100, defs.floor_level - ra, defs.BOTTOM_BOUND),
+                (-ra, h + 100, -ra, -100, defs.LEFT_BOUND),
+                (w + ra, h + 100, w + ra, -100, defs.RIGHT_BOUND)
+              ]:
             wall = Segment(cls.space.static_body, Vec2d(x1, y1), Vec2d(x2, y2), ra)
             wall.elasticity = 0.6
             wall.friction = defs.friction
+            wall.collision_type = ct
             cls.space.add_static(wall)
 
     @classmethod

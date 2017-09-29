@@ -87,6 +87,7 @@ class Element(AnimObject):
     shown_baloons = set()
 
     def __init__(self, elname, *a, activate=False, **kw):
+        Logger.debug("new element kwargs=%s", kw)
         self.elname = elname
         super(Element, self).__init__(*a, **kw)
 
@@ -159,6 +160,7 @@ class Element(AnimObject):
 
         self.available_elnames.add(new_elname)
 
+        Logger.debug("replacng element in center=%s", self.center)
         self.parent.replace_obj(self, Element, new_elname, activate=True)
         self.parent.remove_obj(element)
 

@@ -17,6 +17,8 @@ from baloon import Baloon
 import defs
 from element import Element
 
+class GameOver(AnimObject):
+    pass
 
 class Beam(AnimObject):
     pass
@@ -156,6 +158,12 @@ class AlcanGame(Widget, PhysicsObject):
         self.space.add_collision_handler(Element.collision_type,
                                          Element.collision_type,
                                          self.element_vs_element)
+        self.space.add_collision_handler(Element.collision_type, 
+                                         defs.BOTTOM_BOUND, 
+                                         self.element_vs_bottom)
+        self.space.add_collision_handler(Wizard.collision_type, 
+                                         defs.BOTTOM_BOUND,
+                                         self.wizard_vs_bottom)
 
         Window.bind(on_resize=self.on_resize)
 
@@ -181,11 +189,12 @@ class AlcanGame(Widget, PhysicsObject):
         self.space.remove(obj.body)
         self.space.remove(obj.shape)
         self.remove_widget(obj)
-        del(self.bodyobjects[obj.body])
+        del self.bodyobjects[obj.body]
 
     def replace_obj(self, a, BClass, *Bargs, **Bkwargs):
         self.remove_obj(a)
         Bkwargs['center'] = a.center
+        Bkwargs['size'] = a.size
         self.schedule_add_widget(BClass, *Bargs, **Bkwargs)
 
     def wizard_vs_element(self, __space, arbiter):
@@ -211,11 +220,29 @@ class AlcanGame(Widget, PhysicsObject):
 
         return Clock.schedule_once(partial(cannon.carry_element, element))
 
+    def element_vs_bottom(self, space, arbiter):
+        e, bo = arbiter.shapes
+        if e.collision_type == defs.BOTTOM_BOUND:
+            e, bo = bo, e
+
+        e = self.bodyobjects[e.body]
+        self.remove_obj(e)
+
+
     def element_vs_element(self, space, arbiter):
         e1, e2 = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
         # Clock.schedule_once(partial(e1.collide_with_another,e2))
         return e1.collide_with_another(e2)
+    
+    def wizard_vs_bottom(self, space, arbiter):
+        wiz, bo = arbiter.shapes
+        if wiz.collision_type == defs.BOTTOM_BOUND:
+            wiz, bo = bo, wiz
+
+        mw, mh = defs.map_size
+        self.add_widget(GameOver(pos=(200, mh), size=(800, 271)))
+
 
     def on_key_up(self, window, key, *largs, **kwargs):
         code = Keyboard.keycode_to_string(None, key)
