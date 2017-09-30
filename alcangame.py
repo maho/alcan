@@ -1,11 +1,12 @@
 from functools import partial
 import random
 
+from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
-from kivy.uix.screenmanager import Screen
+from kivy.uix.widget import Widget
 
 from anim import AnimObject, PhysicsObject
 from baloon import Baloon
@@ -17,7 +18,7 @@ from wizard import Wizard
 from other import GameOver
 
 
-class AlcanGame(Screen, PhysicsObject, OnInitMixin):
+class AlcanGame(Widget, PhysicsObject, OnInitMixin):
 
     bfs = NumericProperty('inf')
 
@@ -130,6 +131,7 @@ class AlcanGame(Screen, PhysicsObject, OnInitMixin):
 
         __mw, mh = defs.map_size
         self.add_widget(GameOver(pos=(400, mh), size=(600, 150)))
+        App.get_running_app().sm.schedule_gameover()
 
     def on_key_up(self, window, key, *largs, **__kwargs):
         code = Keyboard.keycode_to_string(None, key)

@@ -91,11 +91,21 @@ class Wizard(AnimObject):
 class AlcanSM(ScreenManager):
     
     def play(self, level):
-        self.switch_to(AlcanGame())
+        self.current = 'game'
+        self.gameuberlayout.add_widget(AlcanGame())
+
+    def schedule_gameover(self):
+        Clock.schedule_once(self.gameover, 4)
+
+    def gameover(self, dt=None):
+        game = self.gameuberlayout.children[0]
+        self.gameuberlayout.remove_widget(game)
+        self.current = 'main'
 
 class AlcanApp(App):
     def build(self):
-        return AlcanSM()
+        self.sm = AlcanSM()
+        return self.sm
 
 
 if __name__ == '__main__':

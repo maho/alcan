@@ -3,10 +3,11 @@
 #:import pi math.pi
 
 <AlcanSM>
+    gameuberlayout: gameuberlayout
     Screen:
         name: 'main'
         BoxLayout:
-            type: 'vertical'
+            orientation: 'vertical'
 
             Button:
                 text: 'easy'
@@ -15,6 +16,11 @@
             Button:
                 text: 'hard'
                 on_press: root.play('hard')
+    Screen:
+        name: 'game'
+        BoxLayout:
+            id: gameuberlayout
+            orientation: 'vertical'
             
     
 <AlcanGame>:
