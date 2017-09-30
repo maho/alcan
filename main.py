@@ -19,6 +19,7 @@ from baloon import Baloon
 import defs
 from element import Element
 from oninitmixin import OnInitMixin
+from utils import report
 
 
 class Beam(AnimObject):
@@ -100,7 +101,9 @@ class AlcanSM(ScreenManager):
     def gameover(self, dt=None):
         game = self.gameuberlayout.children[0]
         self.gameuberlayout.remove_widget(game)
+        game.clear()
         self.current = 'main'
+        report()
 
 class AlcanApp(App):
     def build(self):

@@ -4,6 +4,7 @@ from kivy.properties import ListProperty, StringProperty
 
 from anim import AnimObject
 import defs
+from utils import observe as O
 
 
 class Baloon(AnimObject):
@@ -27,10 +28,10 @@ class Baloon(AnimObject):
             gx, gy = defs.gravity
             self.body.apply_force(defs.baloon_force)
 
-            self.joint = DampedSpring(self.body, self.object_to_follow.body,
+            self.joint = O(DampedSpring(self.body, self.object_to_follow.body,
                                       tuple(self.pos),
                                       tuple(self.object_to_follow.center),
-                                      130, 1.9, 1.5)
+                                      130, 1.9, 1.5))
             self.space.add(self.joint)
 
     def update(self, dt):

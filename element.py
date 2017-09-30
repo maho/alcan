@@ -86,7 +86,7 @@ class Element(AnimObject):
     present_elnames = []
     shown_baloons = set()
 
-    def __init__(self, elname, *a, activate=False, **kw):
+    def __init__(self, elname, activate=False, *a, **kw):
         Logger.debug("new element kwargs=%s", kw)
         self.elname = elname
         super(Element, self).__init__(*a, **kw)
@@ -177,3 +177,10 @@ class Element(AnimObject):
     def steps_to_reach(cls):
         """ how many inventions neccessary to reach dragon """
         return bfs.bfs(cls.available_elnames, 'dragon')
+
+    @classmethod
+    def reset(cls):
+        cls.available_elnames = {'water', 'air', 'earth', 'fire'}
+        cls.present_elnames = []
+        cls.shown_baloons = set()
+

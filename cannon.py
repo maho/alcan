@@ -5,6 +5,7 @@ from kivy.properties import NumericProperty, ObjectProperty
 
 from anim import AnimObject
 import defs
+from utils import observe as O
 
 
 class Cannon(AnimObject):
@@ -31,7 +32,7 @@ class Cannon(AnimObject):
         # move it to center of cannon
         pivot = self.body.position + Vec2d(self.offset)
         element.body.position = pivot
-        element.joint = PivotJoint(self.body, element.body, pivot)
+        element.joint = O(PivotJoint(self.body, element.body, pivot))
         self.space.add(element.joint)
 
         self.bullets.append(element)

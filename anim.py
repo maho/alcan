@@ -2,10 +2,12 @@ from math import degrees
 
 from cymunk import Body, Circle, Space, Segment, Vec2d
 from kivy.clock import Clock
+from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
 import defs
+from utils import observe as obs
 
 
 class PhysicsObject(object):
@@ -26,7 +28,7 @@ class PhysicsObject(object):
     def init_physics():
         """ instead of using space as global variable """
         cls = PhysicsObject
-        cls.space = Space()
+        cls.space = obs(Space())
         cls.space.iterations = 2
         cls.space.gravity = defs.gravity
 
@@ -42,7 +44,13 @@ class PhysicsObject(object):
             wall.elasticity = 0.6
             wall.friction = defs.friction
             wall.collision_type = ct
-            cls.space.add_static(wall)
+            cls.space.add_static(obs(wall))
+
+    @staticmethod
+    def del_physics():
+        cls = PhysicsObject
+        del(cls.space)
+        cls.space = None
 
     @classmethod
     def update_space(cls):
@@ -98,6 +106,7 @@ class AnimObject(Widget, PhysicsObject):
         self.body = None
         self.layers = None
         self.add_body()
+        obs(self)
 
     def add_body(self, dt=None):
 
@@ -115,6 +124,8 @@ class AnimObject(Widget, PhysicsObject):
         self.shape = self.create_shape()
 
         self.add_to_space(self.body, self.shape)
+        obs(self.body)
+        obs(self.shape)
 
     def create_shape(self):
         sx, sy = self.size
@@ -140,7 +151,7 @@ class AnimObject(Widget, PhysicsObject):
         else:
             py += 200
         self.parent.add_widget(
-            Baloon(self, (px, py), text, **kwargs)
+            obs(Baloon(self, (px, py), text, **kwargs))
         )
 
     def update(self, dt):

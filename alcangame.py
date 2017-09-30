@@ -36,7 +36,7 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
         from kivy.base import EventLoop
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
-        Clock.schedule_interval(self.update, 1.0/defs.fps)
+        self.update_event = Clock.schedule_interval(self.update, 1.0/defs.fps)
 
         # collision handlers
         self.space.add_collision_handler(Wizard.collision_type,
@@ -57,6 +57,15 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
 
         Window.bind(on_resize=self.on_resize)
         self.bfs = Element.steps_to_reach()
+
+    def clear(self):
+        self.update_event.cancel()
+        self.update_event = None
+        for x in self.children[:]:
+            if isinstance(x, AnimObject):
+                self.remove_widget(x)
+        self.del_physics()
+
 
     def on_init(self):
         self.add_widget(Baloon(center=(300, 300), object_to_follow=self.wizard,
