@@ -93,6 +93,14 @@ class AlcanSM(ScreenManager):
     
     def play(self, level):
         self.current = 'game'
+
+        if level == 'easy':
+            defs.explode_when_nocomb = 0.9
+        elif level == 'medium':
+            defs.explode_when_nocomb = 0.5
+        elif level == 'hard':
+            defs.explode_when_nocomb = 0.1
+
         self.gameuberlayout.add_widget(AlcanGame())
 
     def schedule_gameover(self):
@@ -102,8 +110,13 @@ class AlcanSM(ScreenManager):
         game = self.gameuberlayout.children[0]
         self.gameuberlayout.remove_widget(game)
         game.clear()
+        Element.reset()
         self.current = 'main'
         report()
+
+    def report(self):
+        report()
+
 
 class AlcanApp(App):
     def build(self):

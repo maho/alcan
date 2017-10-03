@@ -14,8 +14,8 @@ class Cannon(AnimObject):
     offset = ObjectProperty((0, 0))
 
     def __init__(self, *args, **kwargs):
-        self.layers = defs.CARRIED_THINGS_LAYER
         super(Cannon, self).__init__(*args, **kwargs)
+        self.layers = defs.CARRIED_THINGS_LAYER
 
         self.bullets = []
 

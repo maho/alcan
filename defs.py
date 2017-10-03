@@ -5,7 +5,7 @@ fps = 20
 gravity = (0, -700)
 baloon_force = (0, 7500)
 
-friction = 0.3
+friction = 0.4
 floor_level = 5
 kill_level = -1000
 
@@ -16,7 +16,7 @@ wizard_max_speed = 400
 wizard_friction = 4
 wizard_release_impulse = (100, 1900)
 
-shoot_force = 9000
+shoot_force = 8000
 
 mintouchdist = 100
 

@@ -1,7 +1,7 @@
 """ element (elementary ingredients of matter) and managing it """
 
 from functools import partial
-from random import choice
+from random import choice, random
 import re
 
 from kivy.clock import Clock
@@ -153,7 +153,7 @@ class Element(AnimObject):
         new_elname = combine_elements(self.elname, element.elname)
 
         if new_elname is None:
-            if defs.explode_when_nocomb:
+            if random() < defs.explode_when_nocomb:
                 self.parent.replace_obj(self, Explosion, center=self.center)
                 self.parent.remove_obj(element)
             return True

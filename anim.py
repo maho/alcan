@@ -29,7 +29,6 @@ class PhysicsObject(object):
         """ instead of using space as global variable """
         cls = PhysicsObject
         cls.space = obs(Space())
-        cls.space.iterations = 2
         cls.space.gravity = defs.gravity
 
         ra = 100

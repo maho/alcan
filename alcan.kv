@@ -14,8 +14,16 @@
                 on_press: root.play('easy')
 
             Button:
+                text: 'medium'
+                on_press: root.play('medium')
+
+            Button:
                 text: 'hard'
                 on_press: root.play('hard')
+
+            Button:
+                text: 'report'
+                on_press: root.report()
     Screen:
         name: 'game'
         BoxLayout:
