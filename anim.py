@@ -92,13 +92,15 @@ class ClockStopper(Widget):
     clocks = []
     
     def __init__(self, *args, **kwargs):
+        self.on_init_called = False
         super(ClockStopper, self).__init__(*args, **kwargs)
         self.wait_for_parent()
 
     def wait_for_parent(self, dt=None):
-        if self.parent:
+        if self.parent and not self.on_init_called:
             # finally
             self.on_init()
+            self.on_init_called = True
             return
 
         self.schedule_once(self.wait_for_parent)
@@ -130,6 +132,7 @@ class ClockStopper(Widget):
             if not ev.is_triggered:
                 Logger.debug("event%s is removed as dead", ev)
                 cls.clocks.remove(ev)
+
 
 class AnimObject(ClockStopper, PhysicsObject):
     """ base object for all animated objects in game """

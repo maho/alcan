@@ -1,5 +1,3 @@
-from functools import partial
-from math import radians
 import os
 import random
 import time
@@ -18,7 +16,6 @@ from anim import AnimObject, PhysicsObject
 from baloon import Baloon
 import defs
 from element import Element
-from oninitmixin import OnInitMixin
 from utils import report
 
 

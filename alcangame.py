@@ -2,18 +2,15 @@ from functools import partial
 import random
 
 from kivy.app import App
-from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
-from kivy.uix.widget import Widget
 
 from anim import AnimObject, ClockStopper, PhysicsObject
 from baloon import Baloon
 from cannon import Cannon
 import defs
 from element import Element
-from oninitmixin import OnInitMixin
 from wizard import Wizard
 from other import GameOver
 
@@ -65,14 +62,13 @@ class AlcanGame(ClockStopper, PhysicsObject):
                 self.remove_widget(x)
         self.del_physics()
 
-
     def on_init(self):
         self.add_widget(Baloon(center=(300, 300), object_to_follow=self.wizard,
                                text="Alchemist"))
         self.schedule_once(lambda dt: self.add_widget(Baloon(center=(400, 300), size=(200, 50),
-                                                       object_to_follow=self.cannon,
-                                                       text="Large Elements Collider")),
-                            3)
+                                                      object_to_follow=self.cannon,
+                                                      text="Large Elements Collider")),
+                           3)
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to_add.append((oclass, oargs, okwargs))
@@ -141,7 +137,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.add_widget(GameOver(pos=(400, mh), size=(600, 150)))
         App.get_running_app().sm.schedule_gameover()
 
-    def on_key_up(self, window, key, *largs, **__kwargs):
+    def on_key_up(self, __window, key, *__largs, **__kwargs):
         code = Keyboard.keycode_to_string(None, key)
         self.keys_pressed.remove(code)
 
@@ -190,6 +186,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         mi, ma = defs.num_elements_in_zone
         n = sum(int(not e.activated) for e in self.elements_in_zone)
+
+        Logger.debug("elements_in_zone: %s all %s active, %s unique",
+                     len(self.elements_in_zone), n,
+                     len(set(self.elements_in_zone)))
 
         if n < mi:
             Logger.debug("drop because num elements is below %s", mi)

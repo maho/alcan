@@ -4,7 +4,7 @@ from functools import partial
 from random import choice, random
 import re
 
-from kivy.clock import Clock
+from cymunk import PivotJoint
 from kivy.logger import Logger
 from kivy.properties import BooleanProperty, NumericProperty
 from kivy.vector import Vector
@@ -94,7 +94,7 @@ class Element(AnimObject):
         self.imgsrc = "img/" + elname + ".png"
         self.layers = defs.NORMAL_LAYER
         self.wizard = None  # who carry element?
-        self.joint = None
+        self.joint_in_use = None
         self.released_at = -1
 
         if activate:
@@ -130,14 +130,19 @@ class Element(AnimObject):
 
         self.schedule_once(partial(self.activate, timeout='now'), timeout)
 
+    def joint(self, with_who, point):
+        self.unjoint()
+        self.joint_in_use = PivotJoint(self.body, with_who.body, point)
+        self.space.add(self.joint_in_use)
+
     def unjoint(self):
         """ remove existing joint """
-        if not self.joint:
+        if not self.joint_in_use:
             return
-        joint = self.joint
-        self.joint = None
+        joint = self.joint_in_use
+        self.joint_in_use = None
         self.space.remove(joint)
-        del joint
+
         if self.wizard:
             self.wizard.carried_elements.remove(self)
             self.wizard = None
@@ -190,4 +195,3 @@ class Element(AnimObject):
         cls.available_elnames = {'water', 'air', 'earth', 'fire'}
         cls.present_elnames = []
         cls.shown_baloons = set()
-

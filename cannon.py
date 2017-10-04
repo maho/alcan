@@ -32,8 +32,7 @@ class Cannon(AnimObject):
         # move it to center of cannon
         pivot = self.body.position + Vec2d(self.offset)
         element.body.position = pivot
-        element.joint = O(PivotJoint(self.body, element.body, pivot))
-        self.space.add(element.joint)
+        element.joint(self, pivot)
 
         self.bullets.append(element)
 

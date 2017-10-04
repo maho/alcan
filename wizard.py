@@ -26,8 +26,7 @@ class Wizard(AnimObject):
         # #move element up
         pivot = self.body.position + Vec2d(defs.wizard_hand)
         element.body.position = pivot
-        element.joint = PivotJoint(self.body, element.body, pivot)
-        self.space.add(element.joint)
+        element.joint(self, pivot)
 
         self.carried_elements.append(element)
         element.wizard = self
