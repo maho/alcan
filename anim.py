@@ -83,18 +83,55 @@ class PhysicsObject(object):
 
     def on_body_init(self):
         """ called when body is finally set up """
+        pass
 
-#        if self.center_y < defs.kill_level:
-#            self.out_of_bounds()
-#
-#    def out_of_bounds(self):
-#        del(self.bodyobjects[self.body])
-#        self.space.remove(self.body)
-#        self.space.remove(self.shape)
-#        self.parent.remove_widget(self)
+class ClockStopper(Widget):
+    """ class which holds all scheduled clocks and allows to stop them all
+        useful if it's eg. game over """
 
+    clocks = []
+    
+    def __init__(self, *args, **kwargs):
+        super(ClockStopper, self).__init__(*args, **kwargs)
+        self.wait_for_parent()
 
-class AnimObject(Widget, PhysicsObject):
+    def wait_for_parent(self, dt=None):
+        if self.parent:
+            # finally
+            self.on_init()
+            return
+
+        self.schedule_once(self.wait_for_parent)
+
+    def on_init(self):
+        pass
+
+    @classmethod
+    def schedule_once(cls, *args, **kwargs):
+        cls.clocks.append(Clock.schedule_once(*args, **kwargs))
+        Logger.debug("schedule_once(%s)", cls.clocks[-1])
+        cls.clocks_cleanup()
+
+    @classmethod
+    def schedule_interval(cls, *args, **kwargs):
+        cls.clocks.append(Clock.schedule_interval(*args, **kwargs))
+        Logger.debug("schedule_interval(%s)", cls.clocks[-1])
+        cls.clocks_cleanup()
+
+    @classmethod
+    def stop_all_clocks(cls):
+        for event in cls.clocks:
+            event.cancel()
+        cls.clocks_cleanup()
+
+    @classmethod
+    def clocks_cleanup(cls):
+        for ev in cls.clocks[:]:
+            if not ev.is_triggered:
+                Logger.debug("event%s is removed as dead", ev)
+                cls.clocks.remove(ev)
+
+class AnimObject(ClockStopper, PhysicsObject):
     """ base object for all animated objects in game """
 
     collision_type = NumericProperty(0)
@@ -111,7 +148,7 @@ class AnimObject(Widget, PhysicsObject):
 
         if not self.parent:  # object not initialized yet
             # call myself in next frame,
-            Clock.schedule_once(self.add_body)
+            self.schedule_once(self.add_body)
             return
 
         if self.mass is None:

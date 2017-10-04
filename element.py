@@ -105,6 +105,9 @@ class Element(AnimObject):
     def __repr__(self):
         return "[E:%s id=%s]" % (self.elname, id(self))
 
+    def on_init(self):
+        self.parent.elements_in_zone.append(self)
+
     def on_body_init(self):
         assert self.parent is not None
         if self.elname not in self.shown_baloons:
@@ -125,7 +128,7 @@ class Element(AnimObject):
                 self.show_baloon('activated \nready to reaction', size=(150, 80))
             return
 
-        Clock.schedule_once(partial(self.activate, timeout='now'), timeout)
+        self.schedule_once(partial(self.activate, timeout='now'), timeout)
 
     def unjoint(self):
         """ remove existing joint """
@@ -156,6 +159,8 @@ class Element(AnimObject):
             if random() < defs.explode_when_nocomb:
                 self.parent.replace_obj(self, Explosion, center=self.center)
                 self.parent.remove_obj(element)
+                self.parent.elements_in_zone.remove(element)
+                self.parent.elements_in_zone.remove(self)
             return True
 
         self.available_elnames.add(new_elname)
@@ -163,6 +168,8 @@ class Element(AnimObject):
         Logger.debug("replacng element in center=%s", self.center)
         self.parent.replace_obj(self, Element, new_elname, activate=True)
         self.parent.remove_obj(element)
+        self.parent.elements_in_zone.remove(element)
+        self.parent.elements_in_zone.remove(self)
 
     @classmethod
     def random(cls, **kwargs):

@@ -63,7 +63,6 @@ class Wizard(AnimObject):
         element.body.position = pivot
         element.joint = PivotJoint(self.body, element.body, pivot)
         self.space.add(element.joint)
-        self.parent.num_elements_in_zone -= 1
 
         self.carried_elements.append(element)
         element.wizard = self

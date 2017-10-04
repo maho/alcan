@@ -20,7 +20,7 @@ class Baloon(AnimObject):
         self.layers = defs.VISUAL_EFFECTS_LAYER
         self.text = text
 
-        Clock.schedule_once(self.remove, 5)
+        self.schedule_once(self.remove, 5)
 
     def add_body(self, dt=None):
         super(Baloon, self).add_body(dt=dt)

@@ -8,7 +8,7 @@ from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
-from anim import AnimObject, PhysicsObject
+from anim import AnimObject, ClockStopper, PhysicsObject
 from baloon import Baloon
 from cannon import Cannon
 import defs
@@ -18,7 +18,7 @@ from wizard import Wizard
 from other import GameOver
 
 
-class AlcanGame(Widget, PhysicsObject, OnInitMixin):
+class AlcanGame(ClockStopper, PhysicsObject):
 
     bfs = NumericProperty('inf')
 
@@ -30,13 +30,13 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
 
         self.oo_to_remove = set()
         self.oo_to_add = []
-        self.num_elements_in_zone = 0
+        self.elements_in_zone = []
         self.keys_pressed = set()
 
         from kivy.base import EventLoop
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
-        self.update_event = Clock.schedule_interval(self.update, 1.0/defs.fps)
+        self.update_event = self.schedule_interval(self.update, 1.0/defs.fps)
 
         # collision handlers
         self.space.add_collision_handler(Wizard.collision_type,
@@ -59,8 +59,7 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
         self.bfs = Element.steps_to_reach()
 
     def clear(self):
-        self.update_event.cancel()
-        self.update_event = None
+        self.stop_all_clocks()
         for x in self.children[:]:
             if isinstance(x, AnimObject):
                 self.remove_widget(x)
@@ -70,7 +69,7 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
     def on_init(self):
         self.add_widget(Baloon(center=(300, 300), object_to_follow=self.wizard,
                                text="Alchemist"))
-        Clock.schedule_once(lambda dt: self.add_widget(Baloon(center=(400, 300), size=(200, 50),
+        self.schedule_once(lambda dt: self.add_widget(Baloon(center=(400, 300), size=(200, 50),
                                                        object_to_follow=self.cannon,
                                                        text="Large Elements Collider")),
                             3)
@@ -106,7 +105,7 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
         if wizard.carried_elements:
             return True
 
-        Clock.schedule_once(partial(wizard.carry_element, element))
+        self.schedule_once(partial(wizard.carry_element, element))
 
     def cannon_vs_element(self, __space, arbiter):
         cannon, element = [self.bodyobjects[s.body] for s in arbiter.shapes]
@@ -117,7 +116,7 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
         if cannon.bullets:
             return True  # cannot hold more than one bullet
 
-        return Clock.schedule_once(partial(cannon.carry_element, element))
+        self.schedule_once(partial(cannon.carry_element, element))
 
     def element_vs_bottom(self, __space, arbiter):
         e, bo = arbiter.shapes
@@ -190,7 +189,8 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
         self.update_space()
 
         mi, ma = defs.num_elements_in_zone
-        n = self.num_elements_in_zone
+        n = sum(int(not e.activated) for e in self.elements_in_zone)
+
         if n < mi:
             Logger.debug("drop because num elements is below %s", mi)
             self.drop_element()
@@ -238,4 +238,3 @@ class AlcanGame(Widget, PhysicsObject, OnInitMixin):
         if not element:
             return
         self.add_widget(element)
-        self.num_elements_in_zone += 1
