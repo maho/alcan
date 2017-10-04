@@ -121,6 +121,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         e = self.bodyobjects[e.body]
         self.remove_obj(e)
+        self.elements_in_zone.remove(e)
 
     def element_vs_element(self, __space, arbiter):
         e1, e2 = [self.bodyobjects[s.body] for s in arbiter.shapes]
@@ -187,9 +188,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
         mi, ma = defs.num_elements_in_zone
         n = sum(int(not e.activated) for e in self.elements_in_zone)
 
-        Logger.debug("elements_in_zone: %s all %s active, %s unique",
-                     len(self.elements_in_zone), n,
-                     len(set(self.elements_in_zone)))
+        # Logger.debug("elements_in_zone: %s all %s active, %s unique",
+        #             len(self.elements_in_zone), n,
+        #             len(set(self.elements_in_zone)))
 
         if n < mi:
             Logger.debug("drop because num elements is below %s", mi)
