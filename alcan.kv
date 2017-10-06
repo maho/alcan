@@ -48,7 +48,7 @@
 
     FloatLayout:
         pos: root.pos
-        size: root.size
+        size: defs.map_size
         size_hint: None, None 
 
         StackLayout:
@@ -56,10 +56,20 @@
             size: self.parent.size
             size_hint: None, None 
             
-            Label: 
+            Button: 
                 text: "Steps to invent dragon: %s"%root.bfs
                 size_hint: None, None
                 size: 300, 50
+
+            Button: 
+                text: "dupa"
+                size: 100, 50
+                size_hint: None, None
+
+            Button: 
+                text: "dupa2"
+                size: 100, 50
+                size_hint: None, None
             
 
 
