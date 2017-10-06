@@ -3,9 +3,9 @@
 fps = 20
 
 gravity = (0, -700)
-baloon_force = (0, 7500)
+baloon_force = (0, 7100)
 
-friction = 0.5
+friction = 0.45
 floor_level = 5
 kill_level = -1000
 

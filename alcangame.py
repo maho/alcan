@@ -18,6 +18,7 @@ from other import GameOver
 class AlcanGame(ClockStopper, PhysicsObject):
 
     bfs = NumericProperty('inf')
+    scale = NumericProperty(1.0)
 
     def __init__(self, *args, **kwargs):
 
@@ -29,6 +30,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.oo_to_add = []
         self.elements_in_zone = []
         self.keys_pressed = set()
+        self.game_is_over = False
 
         from kivy.base import EventLoop
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
@@ -61,6 +63,14 @@ class AlcanGame(ClockStopper, PhysicsObject):
             if isinstance(x, AnimObject):
                 self.remove_widget(x)
         self.del_physics()
+
+    def gameover(self):
+        if self.game_is_over:
+            return
+        self.game_is_over = True
+        __mw, mh = defs.map_size
+        self.add_widget(GameOver(pos=(400, mh), size=(600, 150)))
+        App.get_running_app().sm.schedule_gameover()
 
     def on_init(self):
         self.add_widget(Baloon(center=(300, 300), object_to_follow=self.wizard,
@@ -120,6 +130,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
             e, bo = bo, e
 
         e = self.bodyobjects[e.body]
+
+        if e.activated:
+            self.gameover()
+
         self.remove_obj(e)
         self.elements_in_zone.remove(e)
 
@@ -134,15 +148,13 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if wiz.collision_type == defs.BOTTOM_BOUND:
             wiz, bo = bo, wiz
 
-        __mw, mh = defs.map_size
-        self.add_widget(GameOver(pos=(400, mh), size=(600, 150)))
-        App.get_running_app().sm.schedule_gameover()
+        self.gameover()
 
     def on_key_up(self, __window, key, *__largs, **__kwargs):
         code = Keyboard.keycode_to_string(None, key)
         self.keys_pressed.remove(code)
 
-    def on_key_down(self, window, key, *largs, **kwargs):
+    def on_key_down(self, __window, key, *__largs, **__kwargs):
         # very dirty hack, but: we don't have any instance of keyboard anywhere, and
         # keycode_to_string should be in fact classmethod, so passing None as self is safe
         code = Keyboard.keycode_to_string(None, key)
@@ -174,7 +186,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
 
-    def on_resize(self, win, w, h):
+    def on_resize(self, __win, w, h):
         mw, mh = defs.map_size
         xratio = w/mw
         yratio = h/mh
@@ -230,7 +242,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def drop_element(self):
         """ drop element from heaven """
-        w, h = self.size
+        _w, h = self.size
 
         # get proper x coordinate
         x = random.randint(*defs.drop_zone)
