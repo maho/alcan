@@ -168,6 +168,7 @@ class Element(AnimObject):
                 self.parent.elements_in_zone.remove(self)
             return True
 
+        self.parent.set_hint(self.elname, element.elname, new_elname)
         self.available_elnames.add(new_elname)
 
         Logger.debug("replacng element in center=%s", self.center)

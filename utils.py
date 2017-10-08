@@ -2,6 +2,9 @@ import weakref
 
 from kivy.logger import Logger
 
+def adhoco(**kwargs):
+    return type('adhoc_object', (object,), dict(**kwargs))
+
 def observe(obj):
     try:
         observe.objs.append((weakref.ref(obj), str(obj)))

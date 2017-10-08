@@ -4,7 +4,7 @@ import random
 from kivy.app import App
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, ObjectProperty
 
 from anim import AnimObject, ClockStopper, PhysicsObject
 from baloon import Baloon
@@ -12,13 +12,15 @@ from cannon import Cannon
 import defs
 from element import Element
 from wizard import Wizard
-from other import GameOver
+from other import GameOver, Hint
+from utils import adhoco
 
 
 class AlcanGame(ClockStopper, PhysicsObject):
 
     bfs = NumericProperty('inf')
     scale = NumericProperty(1.0)
+    stacklayout = ObjectProperty()
 
     def __init__(self, *args, **kwargs):
 
@@ -26,8 +28,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         super(AlcanGame, self).__init__(*args, **kwargs)
 
-        self.oo_to_remove = set()
-        self.oo_to_add = []
+        self.oo_to = adhoco(remove=set(), add=[])
         self.elements_in_zone = []
         self.keys_pressed = set()
         self.game_is_over = False
@@ -35,7 +36,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         from kivy.base import EventLoop
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
-        self.update_event = self.schedule_interval(self.update, 1.0/defs.fps)
+        self.schedule_interval(self.update, 1.0/defs.fps)
 
         # collision handlers
         self.space.add_collision_handler(Wizard.collision_type,
@@ -81,12 +82,19 @@ class AlcanGame(ClockStopper, PhysicsObject):
                            3)
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
-        self.oo_to_add.append((oclass, oargs, okwargs))
+        self.oo_to.add.append((oclass, oargs, okwargs))
+
+    def set_hint(self, a, b, c):
+        hint = Hint()
+        self.stacklayout.add_widget(hint)
+        hint.a = a
+        hint.b = b
+        hint.c = c
 
     def remove_obj(self, obj, __dt=None, just_schedule=True):
         if just_schedule:
             Logger.debug("game: schedule %s to be removed", obj)
-            self.oo_to_remove.add(obj)
+            self.oo_to.remove.add(obj)
             return
         Logger.info("game: remove object obj=%s", obj)
         obj.before_removing()
@@ -215,17 +223,17 @@ class AlcanGame(ClockStopper, PhysicsObject):
             if isinstance(o, AnimObject):
                 o.update(dt)
 
-        for o in self.oo_to_remove:
+        for o in self.oo_to.remove:
             self.remove_obj(o, just_schedule=False)
             Logger.debug("%s just removed", o)
             assert o not in self.children
-        self.oo_to_remove.clear()
+        self.oo_to.remove.clear()
 
-        for ocl, oa, okw in self.oo_to_add:
+        for ocl, oa, okw in self.oo_to.add:
             newo = ocl(*oa, **okw)
             Logger.debug("newo %s created", newo)
             self.add_widget(newo)
-        self.oo_to_add.clear()
+        self.oo_to.add.clear()
 
         if 'up' in self.keys_pressed:
             self.cannon.aim += 1.5

@@ -1,6 +1,9 @@
-from anim import AnimObject
+from anim import AnimObject, ClockStopper
 import defs
 
+
+class Hint(ClockStopper):
+    pass
 
 class GameOver(AnimObject):
     def __init__(self, *a, **kw):

@@ -1,5 +1,6 @@
 #:import defs defs
 #:import Vec2d cymunk.Vec2d
+#:import Vector kivy.vector.Vector
 #:import pi math.pi
 
 <AlcanSM>
@@ -45,6 +46,7 @@
     cannon: cannon
     scale: 1.0
     bfs: 'inf'
+    stacklayout: stacklayout
 
     FloatLayout:
         pos: root.pos
@@ -52,24 +54,17 @@
         size_hint: None, None 
 
         StackLayout:
+            id: stacklayout
             pos: self.parent.pos
             size: self.parent.size
             size_hint: None, None 
             
-            Button: 
+            Label: 
                 text: "Steps to invent dragon: %s"%root.bfs
                 size_hint: None, None
                 size: 300, 50
 
-            Button: 
-                text: "dupa"
-                size: 100, 50
-                size_hint: None, None
 
-            Button: 
-                text: "dupa2"
-                size: 100, 50
-                size_hint: None, None
             
 
 
@@ -242,6 +237,48 @@
         text: root.text
         color: 0,0,0,1
 
+<Hint>:
+    a: '' 
+    b: ''
+    c: ''
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: None, None
+        Label: 
+            text: "%s + %s = %s"%(root.a, root.b, root.c)
+            size: 300, 50
+            size_hint: None, None
+
+        Widget:
+            canvas:
+                Rectangle:
+                    pos: self.pos
+                    size: 50, 50
+                    source: "img/%s.png"%root.a
+
+                Rectangle:
+                    pos: Vector(self.pos) + Vector(60, 0)
+                    size: 50, 50
+                    source: "img/plus.png"
+                
+                Rectangle:
+                    pos: Vector(self.pos) + Vector(110, 0)
+                    size: 50, 50
+                    source: "img/%s.png"%root.b
+
+                Rectangle:
+                    pos: Vector(self.pos) + Vector(160, 0)
+                    size: 50, 50
+                    source: "img/equal.png"
+                
+                Rectangle:
+                    pos: Vector(self.pos) + Vector(210, 0)
+                    size: 50, 50
+                    source: "img/%s.png"%root.c
+                    
+            size: 300, 50
+            size_hint: None, None
 
 
 
