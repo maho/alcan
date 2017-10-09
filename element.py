@@ -107,6 +107,7 @@ class Element(AnimObject):
 
     def on_init(self):
         self.parent.elements_in_zone.append(self)
+        self.parent.calculate_hint()
 
     def on_body_init(self):
         assert self.parent is not None

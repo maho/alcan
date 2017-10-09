@@ -10,7 +10,7 @@ from anim import AnimObject, ClockStopper, PhysicsObject
 from baloon import Baloon
 from cannon import Cannon
 import defs
-from element import Element
+from element import Element, load_elmap
 from wizard import Wizard
 from other import GameOver, Hint
 from utils import adhoco
@@ -32,6 +32,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.elements_in_zone = []
         self.keys_pressed = set()
         self.game_is_over = False
+        self.visible_hints = set()
 
         from kivy.base import EventLoop
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
@@ -85,11 +86,36 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.oo_to.add.append((oclass, oargs, okwargs))
 
     def set_hint(self, a, b, c):
+        if (a, b) in self.visible_hints:
+            return
+
         hint = Hint()
         self.stacklayout.add_widget(hint)
+        self.visible_hints.add((a, b))
         hint.a = a
         hint.b = b
         hint.c = c
+
+        def _fn(__dt):
+            self.stacklayout.remove_widget(hint)
+            self.visible_hints.remove((a, b))
+
+        self.schedule_once(_fn, 6)
+
+    def calculate_hint(self):
+        """ calculate hint for new element appeared """
+        available_elements = set()
+        for x in self.elements_in_zone:
+            available_elements.add(x.elname)
+
+        possible_combinations = []
+        for (a, b), c in load_elmap().items():
+            if a in available_elements and b in available_elements:
+                possible_combinations.append((a, b, c))
+
+        if possible_combinations:
+            a, b, c = random.choice(possible_combinations)
+            self.set_hint(a, b, c)
 
     def remove_obj(self, obj, __dt=None, just_schedule=True):
         if just_schedule:

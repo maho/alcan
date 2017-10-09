@@ -48,25 +48,48 @@
     bfs: 'inf'
     stacklayout: stacklayout
 
-    FloatLayout:
-        pos: root.pos
-        size: defs.map_size
-        size_hint: None, None 
+    BoxLayout:
+        orientation: 'horizontal'
+        size: root.size
 
-        StackLayout:
-            id: stacklayout
-            pos: self.parent.pos
-            size: self.parent.size
-            size_hint: None, None 
+        BoxLayout:
+            orientation: 'vertical'
+            text: "AAAAA"
+
+            canvas:
+                Color:
+                    rgba: (1, 1, 0, 0.5)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             
             Label: 
                 text: "Steps to invent dragon: %s"%root.bfs
-                size_hint: None, None
-                size: 300, 50
+                size_hint: 1.0, 0.1
+                #size: 300, 50
+                #pos_hint: {'left': 0.5, 'top': 0}
+            Widget:
 
 
-            
+        Button:
+            text: "..."
+            size_hint: 1.0, 1.0
 
+        BoxLayout:
+            orientation: 'vertical'
+            BoxLayout:
+                id: stacklayout
+                orientation: 'vertical'
+                size: 300, -1
+                size_hint: None, 1
+                padding: 0, 0, 0, 600
+
+                canvas:
+                    Color:
+                        rgba: (1, 0, 0, 0.5)
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
 
 
     Cannon:
@@ -238,47 +261,48 @@
         color: 0,0,0,1
 
 <Hint>:
+    orientation: 'vertical'
     a: '' 
     b: ''
     c: ''
-
-    BoxLayout:
-        orientation: 'vertical'
+    size: 280, 75
+    size_hint: None,None
+    
+    Label: 
+        text: "%s + %s = %s"%(root.a, root.b, root.c)
+        size: 230, 25
         size_hint: None, None
-        Label: 
-            text: "%s + %s = %s"%(root.a, root.b, root.c)
-            size: 300, 50
-            size_hint: None, None
 
-        Widget:
-            canvas:
-                Rectangle:
-                    pos: self.pos
-                    size: 50, 50
-                    source: "img/%s.png"%root.a
+    Widget:
+        size: 230, 50
+        size_hint: None, None
 
-                Rectangle:
-                    pos: Vector(self.pos) + Vector(60, 0)
-                    size: 50, 50
-                    source: "img/plus.png"
-                
-                Rectangle:
-                    pos: Vector(self.pos) + Vector(110, 0)
-                    size: 50, 50
-                    source: "img/%s.png"%root.b
+        canvas:
+            Rectangle:
+                pos: self.pos
+                size: 50, 50
+                source: "img/%s.png"%root.a
 
-                Rectangle:
-                    pos: Vector(self.pos) + Vector(160, 0)
-                    size: 50, 50
-                    source: "img/equal.png"
-                
-                Rectangle:
-                    pos: Vector(self.pos) + Vector(210, 0)
-                    size: 50, 50
-                    source: "img/%s.png"%root.c
+            Rectangle:
+                pos: Vector(self.pos) + Vector(50, 10)
+                size: 40, 40
+                source: "img/plus.png"
+            
+            Rectangle:
+                pos: Vector(self.pos) + Vector(90, 0)
+                size: 50, 50
+                source: "img/%s.png"%root.b
+
+            Rectangle:
+                pos: Vector(self.pos) + Vector(140, 10)
+                size: 40, 40
+                source: "img/equal.png"
+            
+            Rectangle:
+                pos: Vector(self.pos) + Vector(180, 0)
+                size: 50, 50
+                source: "img/%s.png"%root.c
                     
-            size: 300, 50
-            size_hint: None, None
 
 
 
