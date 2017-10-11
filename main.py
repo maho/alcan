@@ -1,11 +1,9 @@
 import os
-import random
 import time
 
 from cymunk import BoxShape, PivotJoint, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -86,16 +84,22 @@ class Wizard(AnimObject):
         return True
 
 class AlcanSM(ScreenManager):
-    
+
     def play(self, level):
         self.current = 'game'
 
         if level == 'easy':
             defs.explode_when_nocomb = 0.9
+            defs.drop_useless_chance = 0.0
+            defs.left_beam_fine_pos = - 30
         elif level == 'medium':
             defs.explode_when_nocomb = 0.5
+            defs.drop_useless_chance = 0.3
+            defs.left_beam_fine_pos = -10
         elif level == 'hard':
             defs.explode_when_nocomb = 0.1
+            defs.drop_useless_chance = 0.5
+            defs.left_beam_fine_pos = +5
 
         self.gameuberlayout.add_widget(AlcanGame())
 

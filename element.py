@@ -1,7 +1,7 @@
 """ element (elementary ingredients of matter) and managing it """
 
 from functools import partial
-from random import choice, random
+from random import choice, random, sample
 import re
 
 from cymunk import PivotJoint
@@ -107,7 +107,6 @@ class Element(AnimObject):
 
     def on_init(self):
         self.parent.elements_in_zone.append(self)
-        self.parent.calculate_hint()
 
     def on_body_init(self):
         assert self.parent is not None
@@ -119,7 +118,7 @@ class Element(AnimObject):
     def before_removing(self):
         self.present_elnames.remove(self.elname)
 
-    def activate(self, __dt=None, timeout=0.5):
+    def activate(self, __dt=None, timeout=0.3):
         """ make it green and ready to react with other element """
         if timeout == 'now':
             self.activated = True
@@ -179,18 +178,48 @@ class Element(AnimObject):
         self.parent.elements_in_zone.remove(self)
 
     @classmethod
-    def random(cls, **kwargs):
-        """ generate random element from available """
-        try:
-            elname = choice(list(cls.available_elnames - set(cls.present_elnames)))
-            return Element(elname=elname, **kwargs)
-        except IndexError:
-            return None
+    def random(cls, elizo):
+        """ generate random element from available.
+
+            Generate useful element, depending on drop_useless_chance
+
+`           elizo - elements in zone, list of Element instances
+
+        """
+        # zero pass - if useless element is allowed, then return anything
+        if random() < defs.drop_useless_chance:
+            return Element(choice(list(cls.available_elnames)))
+
+        for elnames in ([x.elname for x in elizo if x.activated],
+                        [x.elname for x in elizo],
+                        None):
+            # first pass - combine with present GREEN elements - very useful
+            # second pass - combine with present ALL elements - quite useful
+            # third pass - combine with available elements - least useful
+
+            for x in sample(cls.available_elnames, len(cls.available_elnames)):
+                if cls.is_useful(x, with_elnames=elnames):
+                    return Element(elname=x)
 
     @classmethod
     def steps_to_reach(cls):
         """ how many inventions neccessary to reach dragon """
         return bfs.bfs(cls.available_elnames, 'dragon')
+
+    @classmethod
+    def is_useful(cls, elname, with_elnames=None):
+        """ combine elname with each of available elbames and check if it can
+        bring something new to elnames  """
+
+        if not with_elnames:
+            with_elnames = cls.available_elnames
+
+        for x in with_elnames:
+            result = combine_elements(x, elname)
+            if result and result not in cls.available_elnames:
+                return True
+
+        return False
 
     @classmethod
     def reset(cls):

@@ -1,7 +1,3 @@
-1. limit aktywowanych na powierzchni. Czy to za pomocą liczby, czy za pomocą jakiejś równoważni która może się przewrócić i katastrofa
-
-2. trudność polega na prawopodobieństwie wybuchu przy zetknięciu się niepasujących do siebie
-
 3. jak jest smok - wygrana
 
 4. każda kombinacja - punkty. 
@@ -10,10 +6,6 @@
     "Szwajcarscy alchemicy nie ustają w poszukiwaniu sposobu na uzyskanie smoka z podstawowych pierwiastków. W tym celu uruchomili Wielki Zderzacz Pierwiastków"
 
     "Pomóż im uzyskać smoka"
-
-6. podpowiedź w zależności od poziomu trudności
-
-7. podwójne kliknięcie niech wyrzuca niesioną piłkę
 
 8. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
 

@@ -89,6 +89,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if (a, b) in self.visible_hints:
             return
 
+        if len(self.visible_hints) >= defs.max_hints:
+            return
+
         hint = Hint()
         self.stacklayout.add_widget(hint)
         self.visible_hints.add((a, b))
@@ -102,7 +105,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         self.schedule_once(_fn, 6)
 
-    def calculate_hint(self):
+    def _calculate_hint(self):
         """ calculate hint for new element appeared """
         available_elements = set()
         for x in self.elements_in_zone:
@@ -195,8 +198,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.keys_pressed.add(code)
 
         if code == 'spacebar':
-            if not self.wizard.release_element():
-                self.cannon.shoot()
+            if not self.cannon.shoot():
+                self.wizard.release_element()
 
     def on_touch_move(self, touch):
         if touch.is_double_tap:
@@ -245,6 +248,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if random.random() < defs.drop_chance and n < ma:
             self.drop_element()
 
+        if random.random() < defs.hint_chance:
+            self._calculate_hint()
+
         for o in self.children:
             if isinstance(o, AnimObject):
                 o.update(dt)
@@ -281,7 +287,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
         # get proper x coordinate
         x = random.randint(*defs.drop_zone)
 
-        element = Element.random(center=(x, h))
+        element = Element.random(elizo=self.elements_in_zone)
+        element.center = (x, h)
         if not element:
             return
         self.add_widget(element)

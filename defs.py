@@ -4,6 +4,8 @@ fps = 20
 
 gravity = (0, -700)
 baloon_force = (0, 7100)
+max_hints = 3
+hint_chance = 0.02
 
 friction = 0.45
 floor_level = 5
@@ -22,10 +24,13 @@ mintouchdist = 100
 
 map_size = (1280, 720)
 
+drop_useless_chance = 0.000
 drop_chance = 0.002
 drop_zone = (0, 400)
 num_elements_in_zone = (2, 8)
 explode_when_nocomb = False  # explode elements when they make impossible combination
+
+left_beam_fine_pos = 0
 
 # constants
 

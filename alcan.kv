@@ -50,18 +50,11 @@
 
     BoxLayout:
         orientation: 'horizontal'
-        size: root.size
+        size: defs.map_size
 
         BoxLayout:
             orientation: 'vertical'
             text: "AAAAA"
-
-            canvas:
-                Color:
-                    rgba: (1, 1, 0, 0.5)
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
             
             Label: 
                 text: "Steps to invent dragon: %s"%root.bfs
@@ -71,26 +64,12 @@
             Widget:
 
 
-        Button:
-            text: "..."
+        Widget:
             size_hint: 1.0, 1.0
 
-        BoxLayout:
-            orientation: 'vertical'
-            BoxLayout:
-                id: stacklayout
-                orientation: 'vertical'
-                size: 300, -1
-                size_hint: None, 1
-                padding: 0, 0, 0, 600
-
-                canvas:
-                    Color:
-                        rgba: (1, 0, 0, 0.5)
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-
+        StackLayout:
+            size_hint: 1.0, 1.0
+            id: stacklayout
 
     Cannon:
         id: cannon
@@ -116,7 +95,7 @@
     Beam:
         mass: None
         momentum: None
-        center: 1020, 70
+        center: 1020 + defs.left_beam_fine_pos, 70
     Beam:
         mass: None
         momentum: None
@@ -241,11 +220,6 @@
         Line:
             points: [root.center[0], root.center[1] - 20] + root.anchor 
             width: 2
-        #Color:
-        #    rgba: (1, 1, 1, 1)
-        #Ellipse: 
-        #    pos: root.pos
-        #    size: root.size
 
     anchor: (0, 0)
     text: "..."

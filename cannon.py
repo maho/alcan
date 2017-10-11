@@ -1,11 +1,10 @@
 from math import radians
 
-from cymunk import Vec2d, PivotJoint
+from cymunk import Vec2d
 from kivy.properties import NumericProperty, ObjectProperty
 
 from anim import AnimObject
 import defs
-from utils import observe as O
 
 
 class Cannon(AnimObject):
@@ -37,6 +36,8 @@ class Cannon(AnimObject):
         self.bullets.append(element)
 
     def shoot(self):
+        if not self.bullets:
+            return False
         impulse = Vec2d(0, defs.shoot_force)
         impulse.rotate(radians(self.aim))
         for x in self.bullets:
@@ -45,3 +46,4 @@ class Cannon(AnimObject):
             x.shape.layers = defs.SHOOTED_THINGS_LAYER
             x.activate()
         self.bullets = []
+        return True
