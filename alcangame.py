@@ -5,6 +5,7 @@ from kivy.app import App
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
+from kivy.uix.button import Button
 
 from anim import AnimObject, ClockStopper, PhysicsObject
 from baloon import Baloon
@@ -292,3 +293,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if not element:
             return
         self.add_widget(element)
+
+    def reached_elname(self, elname):
+        Logger.debug("reached_elname(%s)", elname)
+        if elname == "dragon":
+            Logger.debug("readed DRAGON!!!!!")
+            wi = Button(pos=(200, 20), size=(300, 300))
+            self.add_widget(wi)

@@ -24,3 +24,4 @@ plane = boat + sky
 boat = machine + water
 egg = life + life
 worm = fly + earth
+dragon = thunder + fire

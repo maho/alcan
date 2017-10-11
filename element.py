@@ -170,6 +170,7 @@ class Element(AnimObject):
 
         self.parent.set_hint(self.elname, element.elname, new_elname)
         self.available_elnames.add(new_elname)
+        self.parent.reached_elname(new_elname)
 
         Logger.debug("replacng element in center=%s", self.center)
         self.parent.replace_obj(self, Element, new_elname, activate=True)
