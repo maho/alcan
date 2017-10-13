@@ -5,7 +5,6 @@ from kivy.app import App
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
-from kivy.uix.button import Button
 
 from anim import AnimObject, ClockStopper, PhysicsObject
 from baloon import Baloon
@@ -13,7 +12,7 @@ from cannon import Cannon
 import defs
 from element import Element, load_elmap
 from wizard import Wizard
-from other import GameOver, Hint
+from other import GameOver, Hint, Success
 from utils import adhoco
 
 
@@ -82,6 +81,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
                                                       object_to_follow=self.cannon,
                                                       text="Large Elements Collider")),
                            3)
+
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to.add.append((oclass, oargs, okwargs))
@@ -298,5 +298,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         Logger.debug("reached_elname(%s)", elname)
         if elname == "dragon":
             Logger.debug("readed DRAGON!!!!!")
-            wi = Button(pos=(200, 20), size=(300, 300))
+            wi = Success(center=self.center, size=(700, 400))
             self.add_widget(wi)
+            self.game_is_over = True
+            App.get_running_app().sm.schedule_gameover()
