@@ -147,7 +147,7 @@ android.ndk_path = /home/maho/ndk/crystax-ndk-10.3.2
 #android.gradle_dependencies =
 
 # (str) python-for-android branch to use, defaults to master
-#p4a.branch = stable
+# p4a.branch = stable
 
 # (str) OUYA Console category. Should be one of GAME or APP
 # If you leave this blank, OUYA support will not be enabled

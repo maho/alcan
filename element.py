@@ -3,6 +3,7 @@
 from functools import partial
 from random import choice, random, sample
 import re
+import os
 
 from cymunk import PivotJoint
 from kivy.logger import Logger
@@ -18,7 +19,12 @@ def load_elmap():
     """ load elmap from data/elmap.txt"""
     if load_elmap.data:
         return load_elmap.data
-    with open("data/elmap.txt") as f:
+
+    fname = "data/elmap.txt"
+    if "DEBUG" in os.environ:
+        fname = "data/elmap-DEBUG.txt"
+
+    with open(fname) as f:
         for line in f:
             g = re.match(r"^(.*)=(.*)\+(.*)$", line)
             if not g:

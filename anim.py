@@ -111,13 +111,11 @@ class ClockStopper(Widget):
     @classmethod
     def schedule_once(cls, *args, **kwargs):
         cls.clocks.append(Clock.schedule_once(*args, **kwargs))
-        Logger.debug("schedule_once(%s)", cls.clocks[-1])
         cls.clocks_cleanup()
 
     @classmethod
     def schedule_interval(cls, *args, **kwargs):
         cls.clocks.append(Clock.schedule_interval(*args, **kwargs))
-        Logger.debug("schedule_interval(%s)", cls.clocks[-1])
         cls.clocks_cleanup()
 
     @classmethod
@@ -130,7 +128,6 @@ class ClockStopper(Widget):
     def clocks_cleanup(cls):
         for ev in cls.clocks[:]:
             if not ev.is_triggered:
-                Logger.debug("event%s is removed as dead", ev)
                 cls.clocks.remove(ev)
 
 

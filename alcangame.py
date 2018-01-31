@@ -2,6 +2,7 @@ from functools import partial
 import random
 
 from kivy.app import App
+from kivy.base import EventLoop
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
@@ -34,10 +35,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.game_is_over = False
         self.visible_hints = set()
 
-        from kivy.base import EventLoop
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
-        self.schedule_interval(self.update, 1.0/defs.fps)
+        self.schedule_interval(self.update, 1.0 / defs.fps)
 
         # collision handlers
         self.space.add_collision_handler(Wizard.collision_type,
@@ -61,6 +61,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def clear(self):
         self.stop_all_clocks()
+        EventLoop.window.funbind('on_key_down', self.on_key_down)
+        EventLoop.window.funbind('on_key_up', self.on_key_up)
         for x in self.children[:]:
             if isinstance(x, AnimObject):
                 self.remove_widget(x)
@@ -79,9 +81,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
                                text="Alchemist"))
         self.schedule_once(lambda dt: self.add_widget(Baloon(center=(400, 300), size=(200, 50),
                                                       object_to_follow=self.cannon,
-                                                      text="Large Elements Collider")),
-                           3)
-
+                                                      text="Large Elements Collider")), 3)
 
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to.add.append((oclass, oargs, okwargs))
@@ -123,7 +123,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def remove_obj(self, obj, __dt=None, just_schedule=True):
         if just_schedule:
-            Logger.debug("game: schedule %s to be removed", obj)
             self.oo_to.remove.add(obj)
             return
         Logger.info("game: remove object obj=%s", obj)
@@ -209,12 +208,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
         dx, dy = touch.dx, touch.dy
         ix = defs.wizard_touch_impulse_x
         if abs(dx) > abs(dy):
-            Logger.debug("horizontal")
             self.wizard.body.apply_impulse((ix * dx, 0))
 
         if abs(dy) > abs(dx):
-            Logger.debug("vertical")
-            self.cannon.aim += dy/2
+            self.cannon.aim += dy / 2
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
@@ -226,11 +223,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def on_resize(self, __win, w, h):
         mw, mh = defs.map_size
-        xratio = w/mw
-        yratio = h/mh
+        xratio = w / mw
+        yratio = h / mh
 
         self.scale = min(xratio, yratio)
-        Logger.debug("self.scale = %s", self.scale)
 
     def update(self, dt):
         self.update_space()
@@ -243,7 +239,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
         #             len(set(self.elements_in_zone)))
 
         if n < mi:
-            Logger.debug("drop because num elements is below %s", mi)
             self.drop_element()
 
         if random.random() < defs.drop_chance and n < ma:
@@ -258,13 +253,11 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         for o in self.oo_to.remove:
             self.remove_obj(o, just_schedule=False)
-            Logger.debug("%s just removed", o)
             assert o not in self.children
         self.oo_to.remove.clear()
 
         for ocl, oa, okw in self.oo_to.add:
             newo = ocl(*oa, **okw)
-            Logger.debug("newo %s created", newo)
             self.add_widget(newo)
         self.oo_to.add.clear()
 
@@ -295,7 +288,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.add_widget(element)
 
     def reached_elname(self, elname):
-        Logger.debug("reached_elname(%s)", elname)
         if elname == "dragon":
             Logger.debug("readed DRAGON!!!!!")
             wi = Success(center=self.center, size=(700, 400))

@@ -1,11 +1,29 @@
 4. każda kombinacja - punkty. 
 
+4.3. słuchać się rozdzielczości ekranu
+
+4.5. ładniejsze fonty
+
+4.8. narysowane brakujące żywioły
+
 5. tekst na początku: 
     "Szwajcarscy alchemicy nie ustają w poszukiwaniu sposobu na uzyskanie smoka z podstawowych pierwiastków. W tym celu uruchomili Wielki Zderzacz Pierwiastków"
 
     "Pomóż im uzyskać smoka"
 
+6. widok front page, ładniejszy
+
+6.5. rysowana platforma i belki
+
+7. grafika w tle, wybielona
+
+7.5. dźwięki
+
+7.8. muzyka
+
 8. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
+
+8.5. gettext
 
 9. ikonka, splash 
 

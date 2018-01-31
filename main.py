@@ -110,6 +110,7 @@ class AlcanSM(ScreenManager):
         game = self.gameuberlayout.children[0]
         self.gameuberlayout.remove_widget(game)
         game.clear()
+        del(game)
         Element.reset()
         self.current = 'main'
         report()
