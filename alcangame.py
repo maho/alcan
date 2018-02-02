@@ -288,6 +288,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.add_widget(element)
 
     def reached_elname(self, elname):
+        self.points += 1
         if elname == "dragon":
             Logger.debug("readed DRAGON!!!!!")
             wi = Success(center=self.center, size=(700, 400))

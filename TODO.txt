@@ -1,6 +1,10 @@
 4. każda kombinacja - punkty. 
 
+4.2. pozycja po złączeniu się jest za nisko i czasem wpada pod belkę
+
 4.3. słuchać się rozdzielczości ekranu
+
+4.4. dłużej wygrana i być możej dłużej gameover
 
 4.5. ładniejsze fonty
 
@@ -26,6 +30,8 @@
 8.5. gettext
 
 9. ikonka, splash 
+
+10. śmiertelne kombinacje
 
 
 
