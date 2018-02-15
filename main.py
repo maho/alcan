@@ -4,14 +4,13 @@ import time
 from cymunk import BoxShape, PivotJoint, Vec2d
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.logger import Logger
-from kivy.properties import NumericProperty, ObjectProperty
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.widget import Widget
+from kivy.properties import NumericProperty
+from kivy.uix.screenmanager import ScreenManager
 
 from alcangame import AlcanGame
-from anim import AnimObject, PhysicsObject
-from baloon import Baloon
+from anim import AnimObject
 import defs
 from element import Element
 from utils import report
@@ -101,7 +100,9 @@ class AlcanSM(ScreenManager):
             defs.drop_useless_chance = 0.5
             defs.left_beam_fine_pos = +5
 
-        self.gameuberlayout.add_widget(AlcanGame())
+        App.get_running_app().game = AlcanGame()
+
+        self.gameuberlayout.add_widget(App.get_running_app().game)
 
     def schedule_gameover(self):
         Clock.schedule_once(self.gameover, 4)
@@ -121,6 +122,8 @@ class AlcanSM(ScreenManager):
 
 class AlcanApp(App):
     def build(self):
+        Window.size = defs.map_size
+
         self.sm = AlcanSM()
         return self.sm
 

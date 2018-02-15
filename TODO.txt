@@ -2,11 +2,11 @@
 
 4.2. pozycja po złączeniu się jest za nisko i czasem wpada pod belkę
 
-4.3. słuchać się rozdzielczości ekranu
+4.4. dłużej wygrana, najlepiej aż do kliknięcia "continue"
 
-4.4. dłużej wygrana i być możej dłużej gameover
+4.43 - punkty na wygranej
 
-4.5. ładniejsze fonty
+4.45. być możej dłużej gameover
 
 4.8. narysowane brakujące żywioły
 

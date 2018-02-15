@@ -25,8 +25,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def __init__(self, *args, **kwargs):
 
-        Window.size = defs.map_size
-
         super(AlcanGame, self).__init__(*args, **kwargs)
 
         self.oo_to = adhoco(remove=set(), add=[])
@@ -58,6 +56,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         Window.bind(on_resize=self.on_resize)
         self.bfs = Element.steps_to_reach()
+        self.trigger_resize()
 
     def clear(self):
         self.stop_all_clocks()
@@ -221,12 +220,17 @@ class AlcanGame(ClockStopper, PhysicsObject):
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
 
+    def trigger_resize(self):
+        w, h = Window.size
+        self.on_resize(None, w, h)
+
     def on_resize(self, __win, w, h):
         mw, mh = defs.map_size
         xratio = w / mw
         yratio = h / mh
 
         self.scale = min(xratio, yratio)
+        Logger.debug("scale=%s", self.scale)
 
     def update(self, dt):
         self.update_space()
@@ -288,7 +292,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.add_widget(element)
 
     def reached_elname(self, elname):
-        self.points += 1
+        self.points += 5
         if elname == "dragon":
             Logger.debug("readed DRAGON!!!!!")
             wi = Success(center=self.center, size=(700, 400))

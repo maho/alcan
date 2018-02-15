@@ -1,3 +1,1 @@
-dragon = sky + lizard
-sky = water + fire
-lizard = earth + air
+dragon = water + fire

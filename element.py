@@ -172,6 +172,7 @@ class Element(AnimObject):
                 self.parent.remove_obj(element)
                 self.parent.elements_in_zone.remove(element)
                 self.parent.elements_in_zone.remove(self)
+                self.parent.points -= 1
             return True
 
         self.parent.set_hint(self.elname, element.elname, new_elname)
