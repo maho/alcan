@@ -7,7 +7,7 @@ baloon_force = (0, 7100)
 max_hints = 3
 hint_chance = 0.02
 
-friction = 0.45
+friction = 0.65
 floor_level = 5
 kill_level = -1000
 
@@ -15,10 +15,10 @@ wizard_mass = 100
 wizard_touch_impulse_x = 1000
 wizard_hand = (30, -20)  # offset from center, where wizard carry things
 wizard_max_speed = 400
-wizard_friction = 4
+wizard_friction = 4 * 9 / 13
 wizard_release_impulse = (100, 1900)
 
-shoot_force = 8500
+shoot_force = 7800
 
 mintouchdist = 100
 

@@ -96,7 +96,7 @@ class AlcanSM(ScreenManager):
             defs.drop_useless_chance = 0.3
             defs.left_beam_fine_pos = -10
         elif level == 'hard':
-            defs.explode_when_nocomb = 0.1
+            defs.explode_when_nocomb = 0.05
             defs.drop_useless_chance = 0.5
             defs.left_beam_fine_pos = +5
 

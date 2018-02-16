@@ -133,7 +133,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def replace_obj(self, a, BClass, *Bargs, **Bkwargs):
         self.remove_obj(a)
-        Bkwargs['center'] = a.center
+        Bkwargs['pos'] = a.pos
         Bkwargs['size'] = a.size
         self.schedule_add_widget(BClass, *Bargs, **Bkwargs)
 
