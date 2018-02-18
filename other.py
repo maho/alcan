@@ -1,3 +1,4 @@
+from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 
 from anim import AnimObject
@@ -14,6 +15,12 @@ class GameOver(AnimObject):
     def __init__(self, *a, **kw):
         super(GameOver, self).__init__(*a, **kw)
         self.layers = -1 - defs.CARRIED_THINGS_LAYER
+    
+    def on_touch_up(self, touch):
+        App.get_running_app().root.gameover()
+
 
 class Success(BoxLayout):
-    pass
+
+    def on_touch_up(self, touch):
+        App.get_running_app().root.gameover()

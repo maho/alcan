@@ -105,7 +105,7 @@ class AlcanSM(ScreenManager):
         self.gameuberlayout.add_widget(App.get_running_app().game)
 
     def schedule_gameover(self):
-        Clock.schedule_once(self.gameover, 4)
+        Clock.schedule_once(self.gameover, 18)
 
     def gameover(self, dt=None):
         game = self.gameuberlayout.children[0]

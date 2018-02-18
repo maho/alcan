@@ -1,9 +1,3 @@
-4.4. dłużej wygrana, najlepiej aż do kliknięcia "continue"
-
-4.43 - punkty na wygranej
-
-4.45. być możej dłużej gameover
-
 4.8. narysowane brakujące żywioły
 
 5. tekst na początku: 

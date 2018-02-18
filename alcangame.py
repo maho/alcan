@@ -21,6 +21,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     bfs = NumericProperty('inf')
     scale = NumericProperty(1.0)
+    points = NumericProperty(0)
     stacklayout = ObjectProperty()
 
     def __init__(self, *args, **kwargs):
@@ -202,7 +203,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def on_touch_move(self, touch):
         if touch.is_double_tap:
-            return
+            return False
 
         dx, dy = touch.dx, touch.dy
         ix = defs.wizard_touch_impulse_x
@@ -212,13 +213,19 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if abs(dy) > abs(dx):
             self.cannon.aim += dy / 2
 
+        return False
+
     def on_touch_down(self, touch):
         if touch.is_double_tap:
             if not self.wizard.release_element():
                 self.cannon.shoot()
 
+        return False
+
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
+
+        return super(AlcanGame, self).on_touch_up(touch)
 
     def trigger_resize(self):
         w, h = Window.size
