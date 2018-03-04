@@ -1,15 +1,11 @@
-4.8. narysowane brakujące żywioły
-
-5. tekst na początku: 
-    "Szwajcarscy alchemicy nie ustają w poszukiwaniu sposobu na uzyskanie smoka z podstawowych pierwiastków. W tym celu uruchomili Wielki Zderzacz Pierwiastków"
-
-    "Pomóż im uzyskać smoka"
 
 6. widok front page, ładniejszy
 
 6.5. rysowana platforma i belki
 
 7. grafika w tle, wybielona
+
+7.3. punkty zmniejszają się z czasem, dla każdego levelu z róznym tempem
 
 7.5. dźwięki
 

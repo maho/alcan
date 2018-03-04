@@ -4,7 +4,37 @@
 #:import pi math.pi
 
 <AlcanSM>
+    id: sm
     gameuberlayout: gameuberlayout
+    Screen:
+        name: 'intro'
+        BoxLayout:
+            orientation: 'vertical'
+            padding: '30sp'
+
+            IntroLabel:
+                text: defs.INTRO_TEXT
+                # size_hint: 1.0, 1.0
+                texture_size: self.size
+                font_size: '75sp'
+                # text_size: self.size
+                halign: 'center'
+                
+                on_press: sm.current = 'main'
+
+
+            Widget:
+                size_hint: 1.0, 0.3
+
+            # BoxLayout:
+            #     orientation: 'horizontal'
+
+            #     Button:
+            #         text: "Continue"
+            #         size: self.texture_size
+            #         size_hint: None, None
+            #         on_press: sm.current = 'main'
+    
     Screen:
         name: 'main'
         BoxLayout:
@@ -342,4 +372,8 @@
     color: (0, 0, 0, 1)
     font_name: 'fonts/CabinSketch-Bold.otf'
     font_size: '20sp'
+
+<IntroLabel@Button>:
+    color: (1.0, 1.0, 0.5, 0.9)
+    background_color: 0, 0, 0, 0
 
