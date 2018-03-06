@@ -36,21 +36,40 @@
             #         on_press: sm.current = 'main'
     
     Screen:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 0.8
+            Rectangle:
+                pos: self.pos
+                size: self.size
         name: 'main'
         BoxLayout:
             orientation: 'vertical'
 
-            Button:
-                text: 'easy'
-                on_press: root.play('easy')
+            Image:
+                source: 'img/title.png'
 
-            Button:
-                text: 'medium'
-                on_press: root.play('medium')
+            BoxLayout:
+                orientation: 'horizontal'
+                padding: '50sp'
 
-            Button:
-                text: 'hard'
-                on_press: root.play('hard')
+                FrontpageButton:
+                    text: 'easy'
+                    on_press: root.play('easy')
+                    font_size: '100sp'
+                    # texture_size: self.size[0] - 50, self.size[1] - 50
+
+                FrontpageButton:
+                    text: 'medium'
+                    on_press: root.play('medium')
+                    font_size: '100sp'
+                    # texture_size: self.size
+
+                FrontpageButton:
+                    text: 'hard'
+                    font_size: '100sp'
+                    on_press: root.play('hard')
+                    # texture_size: self.size
 
             # Button:
             #     text: 'report'
@@ -372,6 +391,26 @@
     color: (0, 0, 0, 1)
     font_name: 'fonts/CabinSketch-Bold.otf'
     font_size: '20sp'
+
+<Button>:
+    background_color: 0, 0, 0, 0.1
+    # color: (1, 1, 1, 0.9)
+
+<FrontpageButton@Button>
+    _scalew: 1. if not self.width or self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
+    _scaleh: 1. if not self.height or self.texture_size[1] < self.height else float(self.height) / self.texture_size[1]
+    _scale: min(self._scalew, self._scaleh)
+
+    canvas.before:
+        PushMatrix
+        Scale:
+            origin: self.center
+            x: self._scale or 1.0
+            y: self._scale or 1.0
+    canvas.after:
+        PopMatrix:
+    
+    background_color: 0, 0, 0, 0.0
 
 <IntroLabel@Button>:
     color: (1.0, 1.0, 0.5, 0.9)

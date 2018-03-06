@@ -1,4 +1,3 @@
-
 6. widok front page, ładniejszy
 
 6.5. rysowana platforma i belki
@@ -14,6 +13,8 @@
 8. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
 
 8.5. gettext
+
+8.7. kolory?
 
 9. ikonka, splash 
 
