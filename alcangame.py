@@ -41,7 +41,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
         # collision handlers
         self.space.add_collision_handler(Wizard.collision_type,
                                          Element.collision_type,
-                                         self.wizard_vs_element)
+                                         self.wizard_vs_element,
+                                         separate=self.wizard_vs_element_end)
         self.space.add_collision_handler(Element.collision_type,
                                          Cannon.collision_type,
                                          self.cannon_vs_element)
@@ -145,10 +146,26 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if isinstance(wizard, Element):
             wizard, element = element, wizard
 
+        wizard.touching_elements.append(element)
+        Logger.debug("wizard.touching_elements = %s", wizard.touching_elements)
+
         if wizard.carried_elements:
             return True
 
         self.schedule_once(partial(wizard.carry_element, element))
+
+    def wizard_vs_element_end(self, __space, arbiter):
+        wizard, element = [self.bodyobjects[s.body] for s in arbiter.shapes]
+
+        if isinstance(wizard, Element):
+            wizard, element = element, wizard
+
+        Logger.debug("remove %s", element)
+        wizard.touching_elements.remove(element)
+        Logger.debug("wizard.touching_elements = %s (after removing)", wizard.touching_elements)
+
+        if not wizard.carried_elements and wizard.touching_elements:
+            self.schedule_once(partial(wizard.carry_element, wizard.touching_elements[0]))
 
     def cannon_vs_element(self, __space, arbiter):
         cannon, element = [self.bodyobjects[s.body] for s in arbiter.shapes]

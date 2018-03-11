@@ -1,6 +1,6 @@
 import time
 
-from cymunk import PivotJoint, Vec2d
+from cymunk import Vec2d
 from kivy.logger import Logger
 
 from anim import AnimObject
@@ -16,12 +16,13 @@ class Wizard(AnimObject):
         super(Wizard, self).__init__(*a, mass=defs.wizard_mass, **kw)
         self.layers = defs.NORMAL_LAYER
         self.carried_elements = []
+        self.touching_elements = []
         Logger.debug("wizard=%s and id(self.carried_elements) = %s", self, id(self.carried_elements))
         self.applied_force = Vec2d(0, 0)
 
     def carry_element(self, element, __dt=None):
-        Logger.debug("carry element Wizard=%s element=%s self.carried_elements=%s", 
-                self, element, self.carried_elements)
+        Logger.debug("carry element Wizard=%s element=%s self.carried_elements=%s",
+                      self, element, self.carried_elements)
         if time.time() - element.released_at < 1.0:
             return True
         # move element to "carried elements layer"
@@ -35,7 +36,8 @@ class Wizard(AnimObject):
 
         self.carried_elements.append(element)
         Logger.debug("self.carried_elements=%s", self.carried_elements)
-        Logger.debug(" in carry_element: wizard=%s and id(self.carried_elements) = %s", self, id(self.carried_elements))
+        Logger.debug(" in carry_element: wizard=%s and id(self.carried_elements) = %s",
+                     self, id(self.carried_elements))
         element.wizard = self
 
     def add_body(self, dt=None):
@@ -51,12 +53,15 @@ class Wizard(AnimObject):
     def release_element(self):
         if not self.carried_elements:
             return False
-        Logger.debug("in release_element:: wizard=%s and id(self.carried_elements) = %s", self, id(self.carried_elements))
+
         Logger.debug("releasing elements: %s", self.carried_elements)
         for x in self.carried_elements[:]:
             x.body.apply_impulse(defs.wizard_release_impulse)
             x.unjoint()
             x.shape.layers = defs.NORMAL_LAYER
             x.released_at = time.time()
+
+        if self.touching_elements:
+            self.carry_element(self.touching_elements[0])
 
         return True
