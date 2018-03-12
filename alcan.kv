@@ -2,6 +2,7 @@
 #:import Vec2d cymunk.Vec2d
 #:import Vector kivy.vector.Vector
 #:import pi math.pi
+#:import partial functools.partial
 
 <AlcanSM>
     id: sm
@@ -55,25 +56,16 @@
 
                 FrontpageButton:
                     text: 'easy'
-                    on_press: root.play('easy')
-                    font_size: '100sp'
-                    # texture_size: self.size[0] - 50, self.size[1] - 50
+                    press: partial(root.play, 'easy')
 
                 FrontpageButton:
                     text: 'medium'
-                    on_press: root.play('medium')
-                    font_size: '100sp'
-                    # texture_size: self.size
+                    press: partial(root.play, 'medium')
 
                 FrontpageButton:
                     text: 'hard'
-                    font_size: '100sp'
-                    on_press: root.play('hard')
-                    # texture_size: self.size
+                    press: partial(root.play, 'hard')
 
-            # Button:
-            #     text: 'report'
-            #     on_press: root.report()
     Screen:
         name: 'game'
         BoxLayout:
@@ -396,21 +388,73 @@
     background_color: 0, 0, 0, 0.1
     # color: (1, 1, 1, 0.9)
 
-<FrontpageButton@Button>
-    _scalew: 1. if not self.width or self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
-    _scaleh: 1. if not self.height or self.texture_size[1] < self.height else float(self.height) / self.texture_size[1]
-    _scale: min(self._scalew, self._scaleh)
+<FrontpageButton@FloatLayout>:
+    orientation: 'horizontal'
+    text: "--"
+    press: None
 
-    canvas.before:
-        PushMatrix
-        Scale:
-            origin: self.center
-            x: self._scale or 1.0
-            y: self._scale or 1.0
-    canvas.after:
-        PopMatrix:
+    Image:
+        id: imm
+        source: 'img/howhardicon.png'
+        size: root.size[0] - 40, root.size[1] - 40
+        size_hint: None, None
+        pos: root.pos
+
+        fp: (min(*self.size) or 1.0)/5
+
+    Button:
+        # canvas:
+        #     Color:
+        #         rgba: 1, 0, 0, 0.5
+        #     Rectangle:
+        #         pos: self.pos
+        #         size: self.size
+        size: root.size[0] - 40, root.size[1] - 40
+        size_hint: None, None
+        font_size: imm.fp or 1
+        pos: root.pos
+        text: root.text
+        on_press: root.press()
+        background_color: 0, 0, 0, 0
     
-    background_color: 0, 0, 0, 0.0
+
+# <FrontpageButton@Button>
+#     # desired_ratio: 576.0 / 436.0
+#     imgsi: 576.0, 436.0
+# 
+#     # nw: 1. if not self.width else self.width
+#     # nh: 1. if not self.height else self.height
+#     # norm_a: min(self.nw / self.desired_ratio, self.nh)
+#     # si: self.norm_a * self.desired_ratio, self.norm_a
+#     
+# 
+#     _scalew: 1. if not self.width or self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
+#     _scaleh: 1. if not self.height or self.texture_size[1] < self.height else float(self.height) / self.texture_size[1]
+#     _scale: min(self._scalew, self._scaleh)
+# 
+#     simgsi: self.imgsi[0] * self._scale, self.imgsi[1] * self._scale
+# 
+#     canvas.before:
+#         PushMatrix
+# 
+#         Scale:
+#             origin: self.center
+#             x: self._scale or 1.0
+#             y: self._scale or 1.0
+# 
+#         Rectangle:
+#             pos: self.pos
+#             size: self.simgsi or (100, 300)
+#             # size: self.simgsi or (1.0, 1.0)
+#             source: 'img/howhardicon.png'
+#         
+#     canvas.after:
+#         PopMatrix:
+#     
+#     background_color: 0, 0, 0, 0
+#     # texture_size: self.size[0]/4, self.size[1]/4
+# 
+#     text: "%s - %s - %s" % (self.imgsi, self.simgsi, self._scale)
 
 <IntroLabel@Button>:
     color: (1.0, 1.0, 0.5, 0.9)
