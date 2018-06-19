@@ -27,15 +27,6 @@
             Widget:
                 size_hint: 1.0, 0.3
 
-            # BoxLayout:
-            #     orientation: 'horizontal'
-
-            #     Button:
-            #         text: "Continue"
-            #         size: self.texture_size
-            #         size_hint: None, None
-            #         on_press: sm.current = 'main'
-    
     Screen:
         canvas.before:
             Color:
@@ -44,27 +35,39 @@
                 pos: self.pos
                 size: self.size
         name: 'main'
-        BoxLayout:
-            orientation: 'vertical'
+
+        RelativeLayout:
 
             Image:
-                source: 'img/title.png'
+                source: 'img/front.png'
+                id: img
 
-            BoxLayout:
-                orientation: 'horizontal'
-                padding: '50sp'
+            FloatLayout:
+                # canvas.before:
+                #     Color:
+                #         rgba: 1, 0, 0, 0.5
+                #     Rectangle:
+                #         pos: self.pos
+                #         size: self.size
+                minsize: min(*self.parent.size)
+                size: self.minsize, self.minsize
+                pos: (self.parent.width - self.minsize)/2, (self.parent.height - self.minsize)/2
+                size_hint: None, None
 
                 FrontpageButton:
-                    text: 'easy'
-                    press: partial(root.play, 'easy')
-
+                    size_hint: 0.3, 0.35
+                    pos_hint: {'center': (0.2, 0.75)}
+                    on_press: root.play('easy')
+                
                 FrontpageButton:
-                    text: 'medium'
-                    press: partial(root.play, 'medium')
-
+                    size_hint: 0.3, 0.4
+                    pos_hint: {'top': 0.85, 'right': 1.0}
+                    on_press: root.play('medium')
+                
                 FrontpageButton:
-                    text: 'hard'
-                    press: partial(root.play, 'hard')
+                    size_hint: 0.4, 0.2
+                    pos_hint: {'center': (0.45, 0.12)}
+                    on_press: root.play('hard')
 
     Screen:
         name: 'game'
@@ -382,77 +385,9 @@
     font_name: 'fonts/PfefferMediaeval.otf'
     font_size: '20sp'
 
-<Button>:
-    background_color: 0, 0, 0, 0.1
-    # color: (1, 1, 1, 0.9)
-
-<FrontpageButton@FloatLayout>:
-    orientation: 'horizontal'
-    text: "--"
-    press: None
-
-    Image:
-        id: imm
-        source: 'img/howhardicon.png'
-        size: root.size[0] - 40, root.size[1] - 40
-        size_hint: None, None
-        pos: root.pos
-
-        fp: (min(*self.size) or 1.0)/5
-
-    Button:
-        # canvas:
-        #     Color:
-        #         rgba: 1, 0, 0, 0.5
-        #     Rectangle:
-        #         pos: self.pos
-        #         size: self.size
-        size: root.size[0] - 40, root.size[1] - 40
-        size_hint: None, None
-        font_size: imm.fp or 1
-        pos: root.pos
-        text: root.text
-        on_press: root.press()
-        background_color: 0, 0, 0, 0
-    
-
-# <FrontpageButton@Button>
-#     # desired_ratio: 576.0 / 436.0
-#     imgsi: 576.0, 436.0
-# 
-#     # nw: 1. if not self.width else self.width
-#     # nh: 1. if not self.height else self.height
-#     # norm_a: min(self.nw / self.desired_ratio, self.nh)
-#     # si: self.norm_a * self.desired_ratio, self.norm_a
-#     
-# 
-#     _scalew: 1. if not self.width or self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
-#     _scaleh: 1. if not self.height or self.texture_size[1] < self.height else float(self.height) / self.texture_size[1]
-#     _scale: min(self._scalew, self._scaleh)
-# 
-#     simgsi: self.imgsi[0] * self._scale, self.imgsi[1] * self._scale
-# 
-#     canvas.before:
-#         PushMatrix
-# 
-#         Scale:
-#             origin: self.center
-#             x: self._scale or 1.0
-#             y: self._scale or 1.0
-# 
-#         Rectangle:
-#             pos: self.pos
-#             size: self.simgsi or (100, 300)
-#             # size: self.simgsi or (1.0, 1.0)
-#             source: 'img/howhardicon.png'
-#         
-#     canvas.after:
-#         PopMatrix:
-#     
-#     background_color: 0, 0, 0, 0
-#     # texture_size: self.size[0]/4, self.size[1]/4
-# 
-#     text: "%s - %s - %s" % (self.imgsi, self.simgsi, self._scale)
+<FrontpageButton@Button>
+    background_color: 0, 0, 0, 0.0
+    color: (1, 1, 1, 0.9)
 
 <IntroLabel@Button>:
     color: (1.0, 1.0, 0.5, 0.9)
