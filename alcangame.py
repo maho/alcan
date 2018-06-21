@@ -208,7 +208,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         code = Keyboard.keycode_to_string(None, key)
         self.keys_pressed.remove(code)
 
-    def on_key_down(self, __window, key, *__largs, **__kwargs):
+    def on_key_down(self, window, key, *largs, **kwargs):
         # very dirty hack, but: we don't have any instance of keyboard anywhere, and
         # keycode_to_string should be in fact classmethod, so passing None as self is safe
         code = Keyboard.keycode_to_string(None, key)
@@ -287,7 +287,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         for ocl, oa, okw in self.oo_to.add:
             newo = ocl(*oa, **okw)
             self.add_widget(newo)
-        self.oo_to.add.clear()
+        self.oo_to.add[:] = []
 
         if 'up' in self.keys_pressed:
             self.cannon.aim += 1.5
@@ -302,6 +302,16 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if dx:
             self.wizard.body.apply_impulse((defs.wizard_touch_impulse_x * dx, 0))
 
+        self.update_beam_pos(dt)
+
+    def update_beam_pos(self, dt):
+       
+        if random.random() < defs.beam_speed * dt / 600:
+            px, py = self.left_beam.body.position
+            self.left_beam.body.position = (px +10, py)
+
+            Logger.debug("beam_pos=%s", self.left_beam.body.position)
+
     def drop_element(self):
         """ drop element from heaven """
         _w, h = self.size
@@ -310,9 +320,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
         x = random.randint(*defs.drop_zone)
 
         element = Element.random(elizo=self.elements_in_zone)
-        element.center = (x, h)
         if not element:
             return
+        element.center = (x, h)
         self.add_widget(element)
 
     def reached_elname(self, elname):

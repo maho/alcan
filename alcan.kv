@@ -92,6 +92,7 @@
     bfs: 'inf'
     stacklayout: stacklayout
     points: 0
+    left_beam: left_beam
 
     BoxLayout:
         orientation: 'vertical'
@@ -157,9 +158,10 @@
         momentum: None
 
     Beam:
-        mass: None
-        momentum: None
-        center: 1020 + defs.left_beam_fine_pos, 70
+        id: left_beam
+        mass: 'inf'
+        momentum: 'inf'
+        center: 920 + defs.left_beam_fine_pos, 70
     Beam:
         mass: None
         momentum: None
@@ -383,7 +385,7 @@
 <Label>:
     color: (0, 0, 0, 1)
     font_name: 'fonts/PfefferMediaeval.otf'
-    font_size: '20sp'
+    font_size: '15sp'
 
 <FrontpageButton@Button>
     background_color: 0, 0, 0, 0.0
@@ -391,5 +393,5 @@
 
 <IntroLabel@Button>:
     color: (1.0, 1.0, 0.5, 0.9)
-    background_color: 0, 0, 0, 0
+    background_color: 1, 1, 1, 1
 

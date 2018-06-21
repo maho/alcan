@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,txt,otf
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.4
+version = 0.5
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -37,6 +37,7 @@ version = 0.4
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
 requirements = python3crystax,kivy,cymunk
+# requirements = python3crystax,kivy
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -110,6 +111,7 @@ android.ndk_path = /home/maho/ndk/crystax-ndk-10.3.2
 
 # (str) ANT directory (if empty, it will be automatically downloaded.)
 #android.ant_path =
+android.java_build_tool = ant
 
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time
@@ -177,7 +179,7 @@ android.ndk_path = /home/maho/ndk/crystax-ndk-10.3.2
 #android.library_references =
 
 # (str) Android logcat filters to use
-#android.logcat_filters = *:S python:D
+android.logcat_filters = *:S python:D
 
 # (bool) Copy library instead of making a libpymodules.so
 #android.copy_libs = 1

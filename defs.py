@@ -7,8 +7,8 @@ baloon_force = (0, 7100)
 max_hints = 3
 hint_chance = 0.02
 
-friction = 0.65
-floor_level = 5
+friction = 0.55
+floor_level = -5
 kill_level = -1000
 
 wizard_mass = 100
@@ -31,6 +31,7 @@ num_elements_in_zone = (2, 8)
 explode_when_nocomb = False  # explode elements when they make impossible combination
 
 left_beam_fine_pos = 0
+beam_speed = 30  # number of pixels per minute
 
 # constants
 

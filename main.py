@@ -17,7 +17,10 @@ from utils import report
 
 
 class Beam(AnimObject):
-    pass
+    def add_body(self, dt=None):
+        super(Beam, self).add_body(dt=dt)
+        if self.body:  # if obj is initialized ye
+            self.body.velocity_limit = 0
 
 
 class Platform(AnimObject):
@@ -43,14 +46,17 @@ class AlcanSM(ScreenManager):
             defs.explode_when_nocomb = 0.9
             defs.drop_useless_chance = 0.0
             defs.left_beam_fine_pos = - 30
+            defs.beam_speed = 30
         elif level == 'medium':
             defs.explode_when_nocomb = 0.5
             defs.drop_useless_chance = 0.3
             defs.left_beam_fine_pos = -10
+            defs.beam_speed = 50
         elif level == 'hard':
-            defs.explode_when_nocomb = 0.05
+            defs.explode_when_nocomb = 0.01
             defs.drop_useless_chance = 0.5
             defs.left_beam_fine_pos = +5
+            defs.beam_speed = 80
 
         App.get_running_app().game = AlcanGame()
 
