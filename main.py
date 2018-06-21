@@ -45,13 +45,13 @@ class AlcanSM(ScreenManager):
         if level == 'easy':
             defs.explode_when_nocomb = 0.9
             defs.drop_useless_chance = 0.0
-            defs.left_beam_fine_pos = - 30
-            defs.beam_speed = 30
+            defs.left_beam_fine_pos = - 130
+            defs.beam_speed = 15
         elif level == 'medium':
             defs.explode_when_nocomb = 0.5
             defs.drop_useless_chance = 0.3
             defs.left_beam_fine_pos = -10
-            defs.beam_speed = 50
+            defs.beam_speed = 30
         elif level == 'hard':
             defs.explode_when_nocomb = 0.01
             defs.drop_useless_chance = 0.5

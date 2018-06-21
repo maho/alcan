@@ -1,6 +1,14 @@
+4. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
+
+4.5 - większa precyzja sterowania na androidzie
+
+4.7 - baloniki z punktami (miód dla Jonatana)
+
 5. pozycjonowanie widgetów na głowniej stronie, na androidize wychodzi poza
 
 6. widok front page, ładniejszy, lepsze wrapowanie
+
+6.3 - niech się belka przesuwa w regularnych odstępach
 
 6.5. rysowana platforma i belki
 
@@ -12,7 +20,6 @@
 
 7.8. muzyka
 
-8. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
 
 8.5. gettext
 

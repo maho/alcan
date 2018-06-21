@@ -2,8 +2,8 @@
 
 fps = 20
 
-gravity = (0, -700)
-baloon_force = (0, 7100)
+gravity = (0, -750)
+baloon_force = (0, 6500)
 max_hints = 3
 hint_chance = 0.02
 
@@ -18,7 +18,7 @@ wizard_max_speed = 400
 wizard_friction = 4 * 9 / 13
 wizard_release_impulse = (100, 1900)
 
-shoot_force = 7800
+shoot_force = 7100
 
 mintouchdist = 100
 
@@ -31,7 +31,7 @@ num_elements_in_zone = (2, 8)
 explode_when_nocomb = False  # explode elements when they make impossible combination
 
 left_beam_fine_pos = 0
-beam_speed = 30  # number of pixels per minute
+beam_speed = 20  # number of pixels per minute
 
 # constants
 
