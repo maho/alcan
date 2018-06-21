@@ -15,17 +15,17 @@
 
             IntroLabel:
                 text: defs.INTRO_TEXT
-                # size_hint: 1.0, 1.0
-                texture_size: self.size
-                font_size: '75sp'
-                # text_size: self.size
+                size_hint: 1.0, 1.0
+                # texture_size: self.size
+                font_size: '15sp'
+                text_size: self.size
                 halign: 'center'
                 
                 on_press: sm.current = 'main'
 
 
             Widget:
-                size_hint: 1.0, 0.3
+                size_hint: 1.0, 0.2
 
     Screen:
         canvas.before:
@@ -100,7 +100,8 @@
        
         Widget:
             size_hint: None, None
-            size: '40sp', '40sp'
+            size: '20sp', '20sp'
+
         BoxLayout:
             orientation: 'horizontal'
 
@@ -116,7 +117,7 @@
             
             Widget:
                 size_hint: None, None
-                size: '50sp', '10sp'
+                size: '50sp', '20sp'
             
             Label:
                 text: "Points: %s"%root.points
@@ -131,9 +132,14 @@
                 pos_hint: {'right': 0.0, 'top': 1.0}
                 size_hint: 0.5, 1.0
                 id: stacklayout
+            
+            Widget:
+                size_hint: None, None
+                size: '50sp', '20sp'
 
         Widget:
-            size_hint: 1.0, 1.0
+            size_hint: None, None
+            size: '40sp', '40sp'
 
 
     Cannon:
@@ -385,7 +391,7 @@
 <Label>:
     color: (0, 0, 0, 1)
     font_name: 'fonts/PfefferMediaeval.otf'
-    font_size: '15sp'
+    font_size: '17sp'
 
 <FrontpageButton@Button>
     background_color: 0, 0, 0, 0.0
@@ -393,5 +399,6 @@
 
 <IntroLabel@Button>:
     color: (1.0, 1.0, 0.5, 0.9)
-    background_color: 1, 1, 1, 1
+    # background_color: 1, 1, 1, 1
+    background_color: 0, 0, 0, 1.0
 

@@ -1,4 +1,6 @@
-6. widok front page, ładniejszy
+5. pozycjonowanie widgetów na głowniej stronie, na androidize wychodzi poza
+
+6. widok front page, ładniejszy, lepsze wrapowanie
 
 6.5. rysowana platforma i belki
 
