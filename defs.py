@@ -3,7 +3,7 @@
 fps = 20
 
 gravity = (0, -750)
-baloon_force = (0, 6500)
+baloon_force = (0, 6900)
 max_hints = 3
 hint_chance = 0.02
 
@@ -18,7 +18,7 @@ wizard_max_speed = 400
 wizard_friction = 4 * 9 / 13
 wizard_release_impulse = (100, 1900)
 
-shoot_force = 7100
+shoot_force = 7400
 
 mintouchdist = 100
 

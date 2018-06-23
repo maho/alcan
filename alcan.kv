@@ -104,11 +104,7 @@
 
         BoxLayout:
             orientation: 'horizontal'
-
-            Widget:
-                size_hint: None, None
-                size: '50sp', '10sp'
-
+            
             Label: 
                 text: "Steps to invent dragon: %s"%root.bfs
                 size: self.texture_size
@@ -173,6 +169,15 @@
         momentum: None
         center: 1250, 70
 
+    Button:
+        canvas:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: 'img/shoot.png'
+        on_press: root.shoot()
+        pos: 0, 80
+        size: 80, 80
 
 
 

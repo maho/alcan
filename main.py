@@ -39,33 +39,43 @@ class Platform(AnimObject):
 
 class AlcanSM(ScreenManager):
 
+    #def __init__(self, *a, **kw):
+    #    super(ScreenManager, self).__init__(*a, **kw)
+    #    self.game_clock = None
+
+
     def play(self, level):
+        self.game_clock = None
         self.current = 'game'
 
         if level == 'easy':
             defs.explode_when_nocomb = 0.9
             defs.drop_useless_chance = 0.0
             defs.left_beam_fine_pos = - 130
-            defs.beam_speed = 15
+            defs.beam_speed = 10
         elif level == 'medium':
             defs.explode_when_nocomb = 0.5
             defs.drop_useless_chance = 0.3
             defs.left_beam_fine_pos = -10
-            defs.beam_speed = 30
+            defs.beam_speed = 20
         elif level == 'hard':
             defs.explode_when_nocomb = 0.01
             defs.drop_useless_chance = 0.5
             defs.left_beam_fine_pos = +5
-            defs.beam_speed = 80
+            defs.beam_speed = 70
 
         App.get_running_app().game = AlcanGame()
 
         self.gameuberlayout.add_widget(App.get_running_app().game)
 
     def schedule_gameover(self):
-        Clock.schedule_once(self.gameover, 18)
+        self.game_clock = Clock.schedule_once(self.gameover, 18)
 
     def gameover(self, dt=None):
+        if self.game_clock:
+            self.game_clock.cancel()
+            self.game_clock = None
+
         game = self.gameuberlayout.children[0]
         self.gameuberlayout.remove_widget(game)
         game.clear()

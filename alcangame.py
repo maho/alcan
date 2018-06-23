@@ -208,6 +208,11 @@ class AlcanGame(ClockStopper, PhysicsObject):
         code = Keyboard.keycode_to_string(None, key)
         self.keys_pressed.remove(code)
 
+    def shoot(self):
+        if not self.cannon.shoot():
+            self.wizard.release_element()
+
+
     def on_key_down(self, window, key, *largs, **kwargs):
         # very dirty hack, but: we don't have any instance of keyboard anywhere, and
         # keycode_to_string should be in fact classmethod, so passing None as self is safe
@@ -215,8 +220,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.keys_pressed.add(code)
 
         if code == 'spacebar':
-            if not self.cannon.shoot():
-                self.wizard.release_element()
+            self.shoot()
 
     def on_touch_move(self, touch):
         if touch.is_double_tap:
@@ -229,13 +233,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         if abs(dy) > abs(dx):
             self.cannon.aim += dy / 2
-
-        return False
-
-    def on_touch_down(self, touch):
-        if touch.is_double_tap:
-            if not self.wizard.release_element():
-                self.cannon.shoot()
 
         return False
 
