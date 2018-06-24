@@ -106,6 +106,7 @@
             orientation: 'horizontal'
             
             Label: 
+                font_size: 19    
                 text: "Steps to invent dragon: %s"%root.bfs
                 size: self.texture_size
                 size_hint: None, None
@@ -116,6 +117,7 @@
                 size: '50sp', '20sp'
             
             Label:
+                font_size: 19    
                 text: "Points: %s"%root.points
                 size: self.texture_size
                 size_hint: None, None
@@ -163,7 +165,7 @@
         id: left_beam
         mass: 'inf'
         momentum: 'inf'
-        center: 920 + defs.left_beam_fine_pos, 70
+        center: 920 + defs.left_beam_fine_pos, 80
     Beam:
         mass: None
         momentum: None
@@ -176,6 +178,7 @@
                 size: self.size
                 source: 'img/shoot.png'
         on_press: root.shoot()
+        background_color: 0, 0, 0, 0
         pos: 0, 80
         size: 80, 80
 
@@ -356,6 +359,7 @@
     size_hint: None,None
     
     Label: 
+        font_size: 19    
         text: "%s + %s = %s"%(root.a, root.b, root.c)
         size: 230, 25
         size_hint: None, None

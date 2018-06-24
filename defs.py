@@ -3,9 +3,10 @@
 fps = 20
 
 gravity = (0, -750)
-baloon_force = (0, 6900)
+baloon_force = (300, 7200)
 max_hints = 3
 hint_chance = 0.02
+hint_time = 6
 
 friction = 0.55
 floor_level = -5
@@ -13,14 +14,14 @@ kill_level = -1000
 
 wizard_mass = 100
 wizard_touch_impulse_x = 1000
-wizard_hand = (30, -20)  # offset from center, where wizard carry things
+wizard_hand = (40, -20)  # offset from center, where wizard carry things
 wizard_max_speed = 400
 wizard_friction = 4 * 9 / 13
-wizard_release_impulse = (100, 1900)
+wizard_release_impulse = (-100, 2200)
 
-shoot_force = 7400
+shoot_force = 7700
 
-mintouchdist = 100
+mintouchdist = 150
 
 map_size = (1280, 720)
 

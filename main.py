@@ -53,16 +53,25 @@ class AlcanSM(ScreenManager):
             defs.drop_useless_chance = 0.0
             defs.left_beam_fine_pos = - 130
             defs.beam_speed = 10
+            defs.hint_chance = 0.05
+            defs.max_hints = 5
+            defs.hint_time = 10
         elif level == 'medium':
             defs.explode_when_nocomb = 0.5
             defs.drop_useless_chance = 0.3
             defs.left_beam_fine_pos = -10
             defs.beam_speed = 20
+            defs.hint_chance = 0.03
+            defs.max_hints = 3
+            defs.hint_time = 6
         elif level == 'hard':
             defs.explode_when_nocomb = 0.01
             defs.drop_useless_chance = 0.5
             defs.left_beam_fine_pos = +5
             defs.beam_speed = 70
+            defs.hint_chance = 0.01
+            defs.max_hints = 1
+            defs.hint_time = 3
 
         App.get_running_app().game = AlcanGame()
 
