@@ -13,7 +13,7 @@ from alcangame import AlcanGame
 from anim import AnimObject
 import defs
 from element import Element
-from utils import report
+from utils import report, configure_logger
 
 
 class Beam(AnimObject):
@@ -104,6 +104,14 @@ class AlcanApp(App):
         self.sm = AlcanSM()
         return self.sm
 
+    def on_pause(self):
+        Logger.info("app: on pause calledd")
+        return True
+
+    def on_resume(self):
+        Logger.info("app: on resume called")
+        return True
+
 
 if __name__ == '__main__':
 
@@ -115,4 +123,5 @@ if __name__ == '__main__':
         import signal
         signal.signal(signal.SIGINT, debug_signal_handler)
 
+    configure_logger()
     AlcanApp().run()

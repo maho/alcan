@@ -1,6 +1,12 @@
 4. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
 
+4.4 - obsłużyć większy rozmiar ekranu na tereski androidzie
+
 4.5 - większa precyzja sterowania na androidzie
+
+4.6 - easy ma być łatwiejsze w ten sposób, że mają spadać tylko te żywioły które razem z tymi aktywowanymi dadzą coś sensownego
+
+4.65 - podpowiedzi (przynajmniej w easy) powinny podpowiadać tylko to co jest dostępne na ekranie, a nie w ogóle
 
 4.7 - baloniki z punktami (miód dla Jonatana)
 
@@ -14,7 +20,7 @@
 
 7. grafika w tle, wybielona
 
-7.3. punkty zmniejszają się z czasem, dla każdego levelu z róznym tempem
+7.3 - kiedy na głównym ekranie się zrobi on_pause, to po powrocie jest zawis, coś się dzieje i apka nie odpowiada. w normalnej grze brak tego efektu
 
 7.5. dźwięki
 

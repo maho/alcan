@@ -1,5 +1,7 @@
 """ definitions/constants """
 
+syslog_host= ("dlaptop", 5555)
+
 fps = 20
 
 gravity = (0, -750)
