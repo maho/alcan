@@ -222,6 +222,17 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if code == 'spacebar':
             self.shoot()
 
+    def on_touch_down(self, touch):
+        touch.push()
+        touch.apply_transform_2d(lambda x,y: (x/self.scale, y/self.scale))  # quick and dirty, roughly like in Scatter but way simplier
+
+        try:
+            if super().on_touch_down(touch):
+                return True
+        finally:
+            touch.pop()
+
+
     def on_touch_move(self, touch):
         if touch.is_double_tap:
             return False
