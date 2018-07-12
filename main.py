@@ -99,7 +99,7 @@ class AlcanSM(ScreenManager):
 
 class AlcanApp(App):
     def build(self):
-        Window.size = defs.map_size
+        # Window.size = defs.map_size
 
         self.sm = AlcanSM()
         return self.sm

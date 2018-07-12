@@ -1,5 +1,3 @@
-4. dać przycisk strzału dla tych co nie potrafią precyzyjnie kliknąć i może usunąć podwójne kliknięcie jako strzał
-
 4.4 - obsłużyć większy rozmiar ekranu na tereski androidzie
 
 4.5 - większa precyzja sterowania na androidzie
