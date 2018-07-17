@@ -1,3 +1,5 @@
+export APP_P4A_SOURCE_DIR=~/workspace/p4a/
+# export APP_ANDROID_JAVA_BUILD_TOOL=ant
 export APP_ANDROID_ARCH=armeabi-v7a
 export BUILDOZER_BUILD_DIR=.bdozer-$(APP_ANDROID_ARCH)
 export BUILDOZER_BIN_DIR=./bin-$(APP_ANDROID_ARCH)
@@ -24,10 +26,10 @@ $(APK): $(SRCS)
 	buildozer android debug
 
 intel: 
-	make APP_ANDROID_JAVA_BUILD_TOOL=gradle APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug
+	make APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug
 
 irun:
-	make APP_ANDROID_JAVA_BUILD_TOOL=gradle APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug install log
+	make APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug install log
 
 
 

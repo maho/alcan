@@ -111,7 +111,7 @@ android.ndk_path = /home/maho/ndk/crystax-ndk-10.3.2
 
 # (str) ANT directory (if empty, it will be automatically downloaded.)
 #android.ant_path =
-android.java_build_tool = ant
+# android.java_build_tool = ant
 
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time

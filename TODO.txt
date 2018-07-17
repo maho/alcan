@@ -1,5 +1,3 @@
-4.4 - obsłużyć większy rozmiar ekranu na tereski androidzie
-
 4.5 - większa precyzja sterowania na androidzie
 
 4.6 - easy ma być łatwiejsze w ten sposób, że mają spadać tylko te żywioły które razem z tymi aktywowanymi dadzą coś sensownego
