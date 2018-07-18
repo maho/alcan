@@ -4,7 +4,7 @@ export APP_ANDROID_ARCH=armeabi-v7a
 export BUILDOZER_BUILD_DIR=.bdozer-$(APP_ANDROID_ARCH)
 export BUILDOZER_BIN_DIR=./bin-$(APP_ANDROID_ARCH)
 
-export APP_VERSION=0.6
+export APP_VERSION=0.7
 export APP_TITLE=alcan
 export APP_PACKAGE_NAME=$(APP_TITLE)
 ADB=adb
