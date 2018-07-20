@@ -147,7 +147,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
             wizard, element = element, wizard
 
         wizard.touching_elements.append(element)
-        Logger.debug("wizard.touching_elements = %s", wizard.touching_elements)
 
         if wizard.carried_elements:
             return True
@@ -160,9 +159,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if isinstance(wizard, Element):
             wizard, element = element, wizard
 
-        Logger.debug("remove %s", element)
         wizard.touching_elements.remove(element)
-        Logger.debug("wizard.touching_elements = %s (after removing)", wizard.touching_elements)
 
         if not wizard.carried_elements and wizard.touching_elements:
             self.schedule_once(partial(wizard.carry_element, wizard.touching_elements[0]))
@@ -298,15 +295,15 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.oo_to.add[:] = []
 
         if 'up' in self.keys_pressed:
-            self.cannon.aim += 1.5
+            self.cannon.aim += 2
         if 'down' in self.keys_pressed:
-            self.cannon.aim -= 1.5
+            self.cannon.aim -= 2
 
         dx = 0
         if 'left' in self.keys_pressed:
-            dx -= 10
+            dx -= 20
         if 'right' in self.keys_pressed:
-            dx += 10
+            dx += 20
         if dx:
             self.wizard.body.apply_impulse((defs.wizard_touch_impulse_x * dx, 0))
 

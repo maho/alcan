@@ -194,20 +194,18 @@ class Element(AnimObject):
 `           elizo - elements in zone, list of Element instances
 
         """
+        activated_elnames = [x.elname for x in elizo if x.activated]
         # zero pass - if useless element is allowed, then return anything
-        if random() < defs.drop_useless_chance:
-            return Element(choice(list(cls.available_elnames)))
+        # also return anything if activated zone is empty
 
-        for elnames in ([x.elname for x in elizo if x.activated],
-                        [x.elname for x in elizo],
-                        None):
-            # first pass - combine with present GREEN elements - very useful
-            # second pass - combine with present ALL elements - quite useful
-            # third pass - combine with available elements - least useful
+        if random() < defs.drop_useless_chance or not activated_elnames:
+            elname = choice(list(cls.available_elnames))
+            Logger.debug("elements: appear pure random element")
+            return Element(elname)
 
-            for x in sample(cls.available_elnames, len(cls.available_elnames)):
-                if cls.is_useful(x, with_elnames=elnames):
-                    return Element(elname=x)
+        for x in sample(cls.available_elnames, len(cls.available_elnames)):
+            if cls.is_useful(x, with_elnames=activated_elnames):
+                return Element(elname=x)
 
     @classmethod
     def steps_to_reach(cls):
@@ -215,16 +213,14 @@ class Element(AnimObject):
         return bfs.bfs(cls.available_elnames, 'dragon')
 
     @classmethod
-    def is_useful(cls, elname, with_elnames=None):
+    def is_useful(cls, elname, with_elnames):
         """ combine elname with each of available elbames and check if it can
         bring something new to elnames  """
-
-        if not with_elnames:
-            with_elnames = cls.available_elnames
 
         for x in with_elnames:
             result = combine_elements(x, elname)
             if result and result not in cls.available_elnames:
+                Logger.debug("is_useful(elname=%s, with_elnames=%s): %s + %s gives %s which is not in %s", elname, with_elnames, elname, x, result, cls.available_elnames)
                 return True
 
         return False

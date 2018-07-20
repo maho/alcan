@@ -1,4 +1,5 @@
 4.6 - easy ma być łatwiejsze w ten sposób, że mają spadać tylko te żywioły które razem z tymi aktywowanymi dadzą coś sensownego
+    - prawie zrobione, ale trzeba z kandydatów na pojawienie się usunąć te żywioły które już są obecne na scenie
 
 4.65 - podpowiedzi (przynajmniej w easy) powinny podpowiadać tylko to co jest dostępne na ekranie, a nie w ogóle
 
