@@ -259,17 +259,12 @@ class AlcanGame(ClockStopper, PhysicsObject):
         yratio = h / mh
 
         self.scale = min(xratio, yratio)
-        Logger.debug("scale=%s", self.scale)
 
     def update(self, dt):
         self.update_space()
 
         mi, ma = defs.num_elements_in_zone
         n = sum(int(not e.activated) for e in self.elements_in_zone)
-
-        # Logger.debug("elements_in_zone: %s all %s active, %s unique",
-        #             len(self.elements_in_zone), n,
-        #             len(set(self.elements_in_zone)))
 
         if n < mi:
             self.drop_element()
@@ -315,8 +310,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
             px, py = self.left_beam.body.position
             self.left_beam.body.position = (px +10, py)
 
-            Logger.debug("beam_pos=%s", self.left_beam.body.position)
-
     def drop_element(self):
         """ drop element from heaven """
         _w, h = self.size
@@ -333,7 +326,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
     def reached_elname(self, elname):
         self.points += 5
         if elname == "dragon":
-            Logger.debug("readed DRAGON!!!!!")
+            Logger.debug("reached DRAGON!!!!!")
             wi = Success(center=self.center, size=(700, 400))
             self.add_widget(wi)
             self.game_is_over = True

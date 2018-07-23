@@ -7,7 +7,6 @@ from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 
 import defs
-from utils import observe as obs
 
 
 class PhysicsObject(object):
@@ -28,7 +27,7 @@ class PhysicsObject(object):
     def init_physics():
         """ instead of using space as global variable """
         cls = PhysicsObject
-        cls.space = obs(Space())
+        cls.space = Space()
         cls.space.gravity = defs.gravity
 
         ra = 100
@@ -43,7 +42,7 @@ class PhysicsObject(object):
             wall.elasticity = 0.6
             wall.friction = defs.friction
             wall.collision_type = ct
-            cls.space.add_static(obs(wall))
+            cls.space.add_static(wall)
 
     @staticmethod
     def del_physics():
@@ -142,7 +141,6 @@ class AnimObject(ClockStopper, PhysicsObject):
         self.body = None
         self.layers = None
         self.add_body()
-        obs(self)
 
     def add_body(self, dt=None):
 
@@ -160,8 +158,8 @@ class AnimObject(ClockStopper, PhysicsObject):
         self.shape = self.create_shape()
 
         self.add_to_space(self.body, self.shape)
-        obs(self.body)
-        obs(self.shape)
+        self.body
+        self.shape
 
     def create_shape(self):
         sx, sy = self.size
@@ -187,7 +185,7 @@ class AnimObject(ClockStopper, PhysicsObject):
         else:
             py += 200
         self.parent.add_widget(
-            obs(Baloon(self, (px, py), text, **kwargs))
+            Baloon(self, (px, py), text, **kwargs)
         )
 
     def update(self, dt):

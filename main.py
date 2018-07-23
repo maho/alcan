@@ -13,7 +13,7 @@ from alcangame import AlcanGame
 from anim import AnimObject
 import defs
 from element import Element
-from utils import report, configure_logger
+from utils import configure_logger
 
 
 class Beam(AnimObject):
@@ -91,10 +91,6 @@ class AlcanSM(ScreenManager):
         del(game)
         Element.reset()
         self.current = 'main'
-        report()
-
-    def report(self):
-        report()
 
 
 class AlcanApp(App):
