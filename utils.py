@@ -1,4 +1,5 @@
 import logging
+from random import sample
 # from logging.handlers import DatagramHandler
 # from logging.handlers import SysLogHandler
 import weakref
@@ -9,6 +10,11 @@ import defs
 
 def adhoco(**kwargs):
     return type('adhoc_object', (object,), dict(**kwargs))
+
+
+def shuffled(container):
+    lcon = list(container)
+    return sample(lcon, len(lcon))
 
 # def observe(obj):
 #     try:

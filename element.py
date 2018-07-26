@@ -13,6 +13,7 @@ from kivy.vector import Vector
 from anim import AnimObject
 import bfs
 import defs
+from utils import shuffled
 
 
 def load_elmap():
@@ -193,22 +194,42 @@ class Element(AnimObject):
 `           elizo - elements in zone, list of Element instances
 
         """
-        all_elnames = [x.elname for x in elizo]
-        activated_elnames = [x.elname for x in elizo if x.activated]
-        # zero pass - if useless element is allowed, then return anything
-        # also return anything if activated zone is empty
+        Logger.debug("Element.random: elizo=%s", elizo)
 
-        if random() < defs.drop_useless_chance or not activated_elnames:
+        all_elnames = [x.elname for x in elizo]
+        green_elnames = [x.elname for x in elizo if x.activated]
+        white_elnames = [x.elname for x in elizo if not x.activated]
+
+        # first - check if we can just drop enything
+        if random() < defs.drop_useless_chance: 
             elname = choice(list(cls.available_elnames))
             Logger.debug("elements: appear pure random element")
             return Element(elname)
 
-        # don't give element we already know
-        avenlnames = cls.available_elnames
-
-        for x in sample(avenlnames, len(avenlnames)):
-            if cls.is_useful(x, present=all_elnames, activated=activated_elnames):
+        Logger.debug("second")
+        # try to drop element E which combined with GREEN elements in zone will give element R
+        # where R is new, and E is not in zone
+        for x in shuffled(set(cls.available_elnames) - set(white_elnames)):
+            #iterate over all availables except those which lay just by wizard
+            # (to not duplicate them)
+            
+            if cls.is_useful(x, with_elnames=green_elnames, avoid=cls.available_elnames):
                 return Element(elname=x)
+
+        Logger.debug("third")
+        # try to to drop element E which combined with ANY elemtn in zone will give element R
+        # where R is new, and E is not in zone
+        for x in shuffled(set(cls.available_elnames) - set(white_elnames)):
+            #iterate over all availables except those which lay just by wizard
+
+            if cls.is_useful(x, with_elnames=all_elnames, avoid=cls.available_elnames):
+                return Element(elname=x)
+
+        # Nothing useful, drop random
+        ret = choice(list(cls.available_elnames))
+        Logger.debug("fourth nothing useful, drop pure random(%s)", ret)
+        return Element(ret)
+
 
     @classmethod
     def steps_to_reach(cls):
@@ -216,21 +237,20 @@ class Element(AnimObject):
         return bfs.bfs(cls.available_elnames, 'dragon')
 
     @classmethod
-    def is_useful(cls, elname, present, activated):
-        """ combine elname with each of available elbames and check if it can
-        bring something new to elnames  """
+    def is_useful(cls, elname, with_elnames, avoid):
+        """ combine elname with each of with_elnames and check if it can
+            bring something new to elnames, but source element should not belong to 'avoid'  """
 
-        if elname in present:
-            return False
+        Logger.debug("is_useful elname=%s with=%s avoid=%s", elname, with_elnames, avoid)
 
-        for x in activated:
+        for x in with_elnames:
             result = combine_elements(x, elname)
             if not result:
                 continue
-            if result in cls.available_elnames:  # don't produce something we already know
+            if result in avoid:  # don't produce something we already know
                 continue
             
-            Logger.debug("USEFUL?: elname=%s, activated=%s present=%s:  %s + %s gives %s", elname, activated, present, elname, x, result)
+            Logger.debug("USEFUL: elname=%s, with_elnames=%s avoid=%s:  %s + %s gives %s", elname, with_elnames, avoid, elname, x, result)
             return True
 
         return False

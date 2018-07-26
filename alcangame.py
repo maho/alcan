@@ -3,6 +3,7 @@ import random
 
 from kivy.app import App
 from kivy.base import EventLoop
+from kivy.clock import Clock
 from kivy.core.window import Keyboard, Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
@@ -33,6 +34,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.keys_pressed = set()
         self.game_is_over = False
         self.visible_hints = set()
+        self.skip_drop = False
 
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
@@ -206,7 +208,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.keys_pressed.remove(code)
 
     def shoot(self):
-        if not self.cannon.shoot():
+        if self.cannon.shoot():
+            self.skip_drop = True
+            Clock.schedule_once(lambda dt: setattr(self, 'skip_drop', False), defs.skip_drop_time)
+        else:
             self.wizard.release_element()
 
 
@@ -311,7 +316,15 @@ class AlcanGame(ClockStopper, PhysicsObject):
             self.left_beam.body.position = (px +10, py)
 
     def drop_element(self):
-        """ drop element from heaven """
+        """ 
+            drop element from heaven 
+
+            but check if there is no drop blockade
+        """
+
+        if self.skip_drop:
+            return
+
         _w, h = self.size
 
         # get proper x coordinate
