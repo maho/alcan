@@ -1,15 +1,6 @@
-4.6 - easy ma być łatwiejsze w ten sposób, że mają spadać tylko te żywioły które razem z tymi aktywowanymi dadzą coś sensownego
-    - prawie zrobione, ale trzeba z kandydatów na pojawienie się usunąć te żywioły które już są obecne na scenie
-        - prawie zrobione, ale okazało się że utknęliśmy: tj na planszy były aktywowane ziemia, ogień, robak i robak, i nic się już nie zrzucało. 
-            więcej loggingu więc żeby sprawdzić co 
+4.8 - podpowiedzi powinny być dłużej na ekranie
 
-        - poza tym, problem jest taki że zrzut w trybie easy jest tuż po strzale. A tuż po strzale to jeszcze nie wiadomo jaki będzie wynik na scenie, w efekcie 
-            dostajemy żywioł który jednak nie pasuje do tego co mamy aktywowane. Warto by ten zrzut aktywować do czasu ... nie wie, 3 sekundy po strzale?
-
-
-4.65 - podpowiedzi (przynajmniej w easy) powinny podpowiadać tylko to co jest dostępne na ekranie, a nie w ogóle
-
-4.7 - baloniki z punktami (miód dla Jonatana)
+4.9 - podpowiedzi (przynajmniej w easy) powinny podpowiadać tylko to co jest dostępne na ekranie, a nie w ogóle
 
 5. pozycjonowanie widgetów na głowniej stronie, na androidize wychodzi poza
 

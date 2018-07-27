@@ -159,7 +159,7 @@ class Element(AnimObject):
             or bounce (return True)
         """
         if not element.activated or not self.activated:
-            return True
+            return None
 
         Logger.debug("collision: %s vs %s (%s vs %s)", self.elname, element.elname, self, element)
         if self.parent is None:
@@ -173,8 +173,8 @@ class Element(AnimObject):
                 self.parent.remove_obj(element)
                 self.parent.elements_in_zone.remove(element)
                 self.parent.elements_in_zone.remove(self)
-                self.parent.points -= 1
-            return True
+                return -1
+            return None
 
         self.parent.set_hint(self.elname, element.elname, new_elname)
         self.available_elnames.add(new_elname)
@@ -185,6 +185,8 @@ class Element(AnimObject):
         self.parent.elements_in_zone.remove(element)
         self.parent.elements_in_zone.remove(self)
 
+        return +5
+
     @classmethod
     def random(cls, elizo):
         """ generate random element from available.
@@ -194,7 +196,7 @@ class Element(AnimObject):
 `           elizo - elements in zone, list of Element instances
 
         """
-        Logger.debug("Element.random: elizo=%s", elizo)
+        Logger.debug("Element.random: elizo=%s available_elnames=%s", elizo, cls.available_elnames)
 
         all_elnames = [x.elname for x in elizo]
         green_elnames = [x.elname for x in elizo if x.activated]
@@ -207,8 +209,8 @@ class Element(AnimObject):
             return Element(elname)
 
         Logger.debug("second")
-        # try to drop element E which combined with GREEN elements in zone will give element R
-        # where R is new, and E is not in zone
+        # try to drop element E (which is not in zone) which combined with GREEN elements in zone will give 
+        # element R which is new
         for x in shuffled(set(cls.available_elnames) - set(white_elnames)):
             #iterate over all availables except those which lay just by wizard
             # (to not duplicate them)
@@ -217,8 +219,8 @@ class Element(AnimObject):
                 return Element(elname=x)
 
         Logger.debug("third")
-        # try to to drop element E which combined with ANY elemtn in zone will give element R
-        # where R is new, and E is not in zone
+        # try to drop element E (which is not in zone) which combined with ANY elements in zone will give 
+        # element R which is new
         for x in shuffled(set(cls.available_elnames) - set(white_elnames)):
             #iterate over all availables except those which lay just by wizard
 

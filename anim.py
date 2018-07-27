@@ -184,9 +184,13 @@ class AnimObject(ClockStopper, PhysicsObject):
             py = 400
         else:
             py += 200
-        self.parent.add_widget(
-            Baloon(self, (px, py), text, **kwargs)
-        )
+        
+        if not self.parent:
+            self.schedule_once(lambda dt: self.parent.add_widget(Baloon(self, (px, py), text, **kwargs)))
+        else:
+            self.parent.add_widget(
+                Baloon(self, (px, py), text, **kwargs)
+            )
 
     def update(self, dt):
         pass

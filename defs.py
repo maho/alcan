@@ -5,7 +5,7 @@ syslog_host= ("dlaptop", 5555)
 fps = 20
 
 gravity = (0, -750)
-baloon_force = (300, 7200)
+baloon_force = (300, 7900)
 max_hints = 3
 hint_chance = 0.02
 hint_time = 6

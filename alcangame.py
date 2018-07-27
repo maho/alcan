@@ -9,7 +9,7 @@ from kivy.logger import Logger
 from kivy.properties import NumericProperty, ObjectProperty
 
 from anim import AnimObject, ClockStopper, PhysicsObject
-from baloon import Baloon
+from baloon import Baloon, PointsBaloon
 from cannon import Cannon
 import defs
 from element import Element, load_elmap
@@ -194,7 +194,16 @@ class AlcanGame(ClockStopper, PhysicsObject):
         e1, e2 = [self.bodyobjects[s.body] for s in arbiter.shapes]
 
         # Clock.schedule_once(partial(e1.collide_with_another,e2))
-        return e1.collide_with_another(e2)
+        retpoints = e1.collide_with_another(e2)
+
+        if retpoints:
+            x, y = e1.center
+
+            self.add_widget(PointsBaloon((x, y + 30), retpoints))
+
+            self.points += retpoints
+
+        return True
 
     def wizard_vs_bottom(self, __space, arbiter):
         wiz, bo = arbiter.shapes
@@ -337,7 +346,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.add_widget(element)
 
     def reached_elname(self, elname):
-        self.points += 5
         if elname == "dragon":
             Logger.debug("reached DRAGON!!!!!")
             wi = Success(center=self.center, size=(700, 400))

@@ -46,3 +46,22 @@ class Baloon(AnimObject):
         del(joint)
 
         self.parent.remove_obj(self)
+
+class PointsBaloon(AnimObject):
+    def __init__(self, center, points):
+        super().__init__(center=center)
+
+        self.points = points
+
+        self.layers = defs.VISUAL_EFFECTS_LAYER
+        self.schedule_once(self.remove, 5)
+
+
+    def add_body(self, dt=None):
+        super().add_body()
+        if self.body:
+            self.body.apply_force(defs.baloon_force)
+
+    def remove(self, dt=None):
+        self.parent.remove_obj(self)
+    
