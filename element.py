@@ -61,7 +61,7 @@ class Explosion(AnimObject):
 
     frame = NumericProperty(1)
 
-    def __init__(self, *a, **kw):
+    def __init__(self, momentum=None, *a, **kw):
         super(Explosion, self).__init__(*a, **kw)
         self.layers = defs.VISUAL_EFFECTS_LAYER
 
@@ -93,8 +93,11 @@ class Element(AnimObject):
     present_elnames = []
     shown_baloons = set()
 
-    def __init__(self, elname, activate=False, *a, **kw):
-        Logger.debug("new element kwargs=%s", kw)
+    def __init__(self, elname, activate=False, momentum=None, *a, **kw):
+        """
+            momentum - that linear one, mass*V
+        """
+        Logger.debug("new element kwargs=%s, momentum=%s", kw, momentum)
         self.elname = elname
         super(Element, self).__init__(*a, **kw)
 
@@ -103,6 +106,7 @@ class Element(AnimObject):
         self.wizard = None  # who carry element?
         self.joint_in_use = None
         self.released_at = -1
+        self.momentum = momentum
 
         if activate:
             self.activate()
@@ -121,6 +125,8 @@ class Element(AnimObject):
             self.shown_baloons.add(self.elname)
             self.show_baloon(self.elname)
             self.parent.bfs = self.steps_to_reach()
+            if self.momentum:
+                self.body.velocity = self.momentum / self.body.mass
 
     def before_removing(self):
         self.present_elnames.remove(self.elname)
@@ -169,8 +175,7 @@ class Element(AnimObject):
 
         if new_elname is None:
             if random() < defs.explode_when_nocomb:
-                self.parent.replace_obj(self, Explosion, center=self.center)
-                self.parent.remove_obj(element)
+                self.parent.replace_objs([self, element], Explosion, center=self.center)
                 self.parent.elements_in_zone.remove(element)
                 self.parent.elements_in_zone.remove(self)
                 return -1
@@ -180,8 +185,7 @@ class Element(AnimObject):
         self.available_elnames.add(new_elname)
         self.parent.reached_elname(new_elname)
 
-        self.parent.replace_obj(self, Element, new_elname, activate=True)
-        self.parent.remove_obj(element)
+        self.parent.replace_objs([self, element], Element, new_elname, activate=True)
         self.parent.elements_in_zone.remove(element)
         self.parent.elements_in_zone.remove(self)
 

@@ -144,7 +144,7 @@
         id: cannon
         pos: 400, 100
         mass: None
-        momentum: None 
+        moment_of_inertia: None 
 
     Wizard:
         id: wizard
@@ -159,16 +159,17 @@
         pos: 0,-100
         size: 500, 190
         mass: None
-        momentum: None
+        moment_of_inertia: None
 
     Beam:
         id: left_beam
         mass: 'inf'
-        momentum: 'inf'
+        moment_of_inertia: 'inf'
         center: 920 + defs.left_beam_fine_pos, 80
+
     Beam:
         mass: None
-        momentum: None
+        moment_of_inertia: None
         center: 1250, 70
 
     Button:
@@ -187,7 +188,7 @@
 <GameOver>:
     size: 800, 271
     angle: 0
-    momentum: 10**8
+    moment_of_inertia: 10**8
     mass: 1000
 
     canvas:
@@ -268,7 +269,7 @@
 <Platform>:
     size: 400, 50
     angle: 0
-    momentum:  10**6
+    moment_of_inertia:  10**6
     
     canvas:
 

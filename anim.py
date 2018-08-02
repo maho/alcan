@@ -16,7 +16,7 @@ class PhysicsObject(object):
     bodyobjects = {}
 
     mass = NumericProperty(10, allownone=True)
-    momentum = NumericProperty('INF', allownone=True)
+    moment_of_inertia = NumericProperty('INF', allownone=True)
     friction = NumericProperty(defs.friction)
 
     def __init__(self):
@@ -150,9 +150,9 @@ class AnimObject(ClockStopper, PhysicsObject):
             return
 
         if self.mass is None:
-            self.momentum is None
+            self.moment_of_inertia is None
 
-        self.body = Body(self.mass, self.momentum)
+        self.body = Body(self.mass, self.moment_of_inertia)
         self.body.position = self.center
 
         self.shape = self.create_shape()

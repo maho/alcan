@@ -1,6 +1,7 @@
 from functools import partial
 import random
 
+from cymunk import Vec2d
 from kivy.app import App
 from kivy.base import EventLoop
 from kivy.clock import Clock
@@ -135,10 +136,19 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.remove_widget(obj)
         del self.bodyobjects[obj.body]
 
-    def replace_obj(self, a, BClass, *Bargs, **Bkwargs):
-        self.remove_obj(a)
-        Bkwargs['pos'] = a.pos
-        Bkwargs['size'] = a.size
+    def replace_objs(self, As, BClass, *Bargs, **Bkwargs):
+        massum = 0.0
+        momentum = Vec2d(0, 0)
+        for x in As:
+            massum += x.body.mass
+            momentum += x.body.velocity * x.body.mass
+            Logger.debug("momentum is %s after adding mass=%s vel=%s", momentum, x.body.velocity, x.body.mass)
+            self.remove_obj(x)
+        Bkwargs['pos'] = As[0].pos
+        Bkwargs['size'] = As[0].size
+        Bkwargs['momentum'] = momentum / len(As)  # I have no idea why I should divide it by number of As. 
+        #  Afair it should work well without dividing, 
+
         self.schedule_add_widget(BClass, *Bargs, **Bkwargs)
 
     def wizard_vs_element(self, __space, arbiter):
