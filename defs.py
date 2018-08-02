@@ -8,7 +8,7 @@ gravity = (0, -750)
 baloon_force = (300, 7900)
 max_hints = 3
 hint_chance = 0.02
-hint_time = 6
+hint_time = 10
 
 friction = 0.55
 floor_level = -5

@@ -66,9 +66,9 @@ class AlcanSM(ScreenManager):
             defs.hint_time = 6
         elif level == 'hard':
             defs.explode_when_nocomb = 0.01
-            defs.drop_useless_chance = 0.5
+            defs.drop_useless_chance = 0.45
             defs.left_beam_fine_pos = +5
-            defs.beam_speed = 70
+            defs.beam_speed = 60
             defs.hint_chance = 0.01
             defs.max_hints = 1
             defs.hint_time = 3
