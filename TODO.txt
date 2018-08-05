@@ -1,5 +1,3 @@
-4.9 - podpowiedzi (przynajmniej w easy) powinny podpowiadać tylko to co jest dostępne na ekranie, a nie w ogóle
-
 5. pozycjonowanie widgetów na głowniej stronie, na androidize wychodzi poza
 
 6. widok front page, ładniejszy, lepsze wrapowanie
