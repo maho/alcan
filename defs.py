@@ -6,8 +6,8 @@ fps = 20
 
 gravity = (0, -750)
 baloon_force = (300, 7900)
-max_hints = 3
-hint_chance = 0.02
+max_hints = 1
+hint_chance = 0.002
 hint_time = 10
 
 friction = 0.55

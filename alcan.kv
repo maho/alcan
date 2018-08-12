@@ -103,10 +103,11 @@
             size: '20sp', '20sp'
 
         BoxLayout:
+
             orientation: 'horizontal'
+            size_hint: 1.0, 1.0
             
             Label: 
-                font_size: 19    
                 text: "Steps to invent dragon: %s"%root.bfs
                 size: self.texture_size
                 size_hint: None, None
@@ -117,19 +118,31 @@
                 size: '50sp', '20sp'
             
             Label:
-                font_size: 19    
                 text: "Points: %s"%root.points
                 size: self.texture_size
                 size_hint: None, None
                 pos_hint: {'left': 0.0, 'top': 1.0}
 
             Widget:
-                size_hint: 1.0, 0.1
+                size_hint: 0.1, 0.1
 
-            StackLayout:
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 0.2, 0.3
                 pos_hint: {'right': 0.0, 'top': 1.0}
-                size_hint: 0.5, 1.0
-                id: stacklayout
+
+                StackLayout:
+                    pos_hint: {'right': 0.0, 'top': 1.0}
+                    size_hint: 1.0, 1.0
+                    id: stacklayout
+
+                Button:
+                    size_hint: 0.1, 0.2
+                    pos_hint: {'right': 0.0, 'top': 1.0}
+                    text: "?"
+                    on_press: root.rotate_hint()
+
+
             
             Widget:
                 size_hint: None, None
@@ -336,7 +349,7 @@
         id: lab
         halign: 'center'
         size: self.texture_size
-        font_size: '80sp'
+        font_size: 80
         pos: root.pos
         text: "%+d" % root.points
         color: (1, 0, 0, 1) if root.points < 0 else (0, 0.8, 0.2, 1)
@@ -366,21 +379,21 @@
         color: 0,0,0,1
 
 <Hint>:
+
     orientation: 'vertical'
     a: '' 
     b: ''
     c: ''
-    size: 280, 75
+    size: 380, 75
     size_hint: None,None
     
     Label: 
-        font_size: 19    
         text: "%s + %s = %s"%(root.a, root.b, root.c)
-        size: 230, 25
+        size: 380, 25
         size_hint: None, None
 
     Widget:
-        size: 230, 50
+        size: 380, 50
         size_hint: None, None
 
         canvas:
@@ -415,7 +428,7 @@
 <Label>:
     color: (0, 0, 0, 1)
     font_name: 'fonts/PfefferMediaeval.otf'
-    font_size: '17sp'
+    font_size: 35
 
 <FrontpageButton@Button>
     background_color: 0, 0, 0, 0.0

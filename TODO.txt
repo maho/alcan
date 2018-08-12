@@ -1,6 +1,11 @@
-5. pozycjonowanie widgetów na głowniej stronie, na androidize wychodzi poza
+- oliwier gra lewym kciukiem i to jest dla niego niewygodnie, patryk: podnieść do góry i na dole dać przyciski
+- patryk nie wie jak zrzucić niesiony żywioł - trzeba zrobić osobny przycisk do zrzucania albo dać inny obrazek dla strzału
+- patryk: za szybko lecą podpowiedzi
+- patryk: zamiast listy hintów, przewijanie jej palcami
 
 6. widok front page, ładniejszy, lepsze wrapowanie
+
+6.1. Oliwier na easy-medium-hard klikał na "alcan", więc nie jest jasne dla niektórych co trzeba kliknąć żeby zacząć
 
 6.3 - niech się belka przesuwa w regularnych odstępach
 

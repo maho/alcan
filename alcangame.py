@@ -1,4 +1,5 @@
 from functools import partial
+from collections import OrderedDict, defaultdict
 import random
 
 from cymunk import Vec2d
@@ -34,7 +35,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.elements_in_zone = []
         self.keys_pressed = set()
         self.game_is_over = False
-        self.visible_hints = set()
+        self.visible_hints = OrderedDict()
+        self.hints_stats = defaultdict(lambda: 0)
         self.skip_drop = False
 
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
@@ -92,38 +94,39 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def set_hint(self, a, b, c):
         if (a, b) in self.visible_hints:
-            return
+            return False
 
-        if len(self.visible_hints) >= defs.max_hints:
-            return
 
         hint = Hint()
         self.stacklayout.add_widget(hint)
-        self.visible_hints.add((a, b))
+        self.visible_hints[a, b] = hint
+        self.hints_stats[a, b] += 1
         hint.a = a
         hint.b = b
         hint.c = c
-
-        def _fn(__dt):
+        
+        if len(self.visible_hints) > defs.max_hints:
+            (a, b), hint = self.visible_hints.popitem(0)
             self.stacklayout.remove_widget(hint)
-            self.visible_hints.remove((a, b))
 
-        self.schedule_once(_fn, 6)
+        return True
 
-    def _calculate_hint(self):
+
+
+    def rotate_hint(self):
         """ calculate hint for new element appeared """
-        available_elements = set()
-        for x in self.elements_in_zone:
-            available_elements.add(x.elname)
+        available_elements = Element.available_elnames
 
         possible_combinations = []
         for (a, b), c in load_elmap().items():
             if a in available_elements and b in available_elements:
                 possible_combinations.append((a, b, c))
 
-        if possible_combinations:
-            a, b, c = random.choice(possible_combinations)
-            self.set_hint(a, b, c)
+        possible_combinations.sort(key=lambda x: self.hints_stats[x[0], x[1]])
+
+        for a, b, c in possible_combinations:
+            if self.set_hint(a, b, c):
+                break
 
     def remove_obj(self, obj, __dt=None, just_schedule=True):
         if just_schedule:
@@ -297,7 +300,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
             self.drop_element()
 
         if random.random() < defs.hint_chance:
-            self._calculate_hint()
+            self.rotate_hint()
 
         for o in self.children:
             if isinstance(o, AnimObject):
@@ -314,9 +317,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.oo_to.add[:] = []
 
         if 'up' in self.keys_pressed:
-            self.cannon.aim += 2
+            self.cannon.aim += 3
         if 'down' in self.keys_pressed:
-            self.cannon.aim -= 2
+            self.cannon.aim -= 3
 
         dx = 0
         if 'left' in self.keys_pressed:
