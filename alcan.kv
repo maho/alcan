@@ -137,10 +137,17 @@
                     id: stacklayout
 
                 Button:
-                    size_hint: 0.1, 0.2
+                    canvas:
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                            source: 'img/hint.png'
+                    size_hint: None, None
+                    size: 34, 41
                     pos_hint: {'right': 0.0, 'top': 1.0}
                     text: "?"
                     on_press: root.rotate_hint()
+                    background_color: 0, 0, 0, 0.0
 
 
             

@@ -124,7 +124,7 @@ class Element(AnimObject):
         if self.elname not in self.shown_baloons:
             self.shown_baloons.add(self.elname)
             self.show_baloon(self.elname)
-            self.parent.bfs = self.steps_to_reach()
+            self.parent.set_bfs()
             if self.momentum:
                 self.body.velocity = self.momentum / self.body.mass
 

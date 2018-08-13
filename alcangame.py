@@ -62,7 +62,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
                                          self.wizard_vs_bottom)
 
         Window.bind(on_resize=self.on_resize)
-        self.bfs = Element.steps_to_reach()
+        self.set_bfs()
         self.trigger_resize()
 
     def clear(self):
@@ -92,6 +92,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
     def schedule_add_widget(self, oclass, *oargs, **okwargs):
         self.oo_to.add.append((oclass, oargs, okwargs))
 
+    def set_bfs(self):
+        self.bfs, self.hints_to_show = Element.steps_to_reach()
+
     def set_hint(self, a, b, c):
         if (a, b) in self.visible_hints:
             return False
@@ -118,9 +121,10 @@ class AlcanGame(ClockStopper, PhysicsObject):
         available_elements = Element.available_elnames
 
         possible_combinations = []
-        for (a, b), c in load_elmap().items():
-            if a in available_elements and b in available_elements:
-                possible_combinations.append((a, b, c))
+        elmap = load_elmap()
+        for (a, b) in self.hints_to_show:
+            c = elmap[a, b]
+            possible_combinations.append((a, b, c))
 
         possible_combinations.sort(key=lambda x: self.hints_stats[x[0], x[1]])
 
