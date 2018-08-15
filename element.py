@@ -240,7 +240,10 @@ class Element(AnimObject):
     @classmethod
     def steps_to_reach(cls):
         """ how many inventions neccessary to reach dragon """
-        return bfs.bfs(cls.available_elnames, 'dragon')
+        Logger.debug("steps_to_reach(): cls.available_elnames=%s, dest='dragon'", cls.available_elnames)
+        ret = bfs.bfs(cls.available_elnames, 'dragon')
+        Logger.debug("returned %s", ret)
+        return ret
 
     @classmethod
     def is_useful(cls, elname, with_elnames, avoid):

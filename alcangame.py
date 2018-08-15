@@ -93,7 +93,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.oo_to.add.append((oclass, oargs, okwargs))
 
     def set_bfs(self):
-        self.bfs, self.hints_to_show = Element.steps_to_reach()
+        self.hints_to_show = Element.steps_to_reach()
+        self.bfs = len(self.hints_to_show)
 
     def set_hint(self, a, b, c):
         if (a, b) in self.visible_hints:
@@ -305,9 +306,6 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         if random.random() < defs.drop_chance and n < ma:
             self.drop_element()
-
-        if random.random() < defs.hint_chance:
-            self.rotate_hint()
 
         for o in self.children:
             if isinstance(o, AnimObject):

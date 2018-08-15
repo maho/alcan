@@ -1,5 +1,6 @@
 from collections import defaultdict
 from pprint import pprint
+from random import choice
 
 
 def reverse_elmap():
@@ -13,27 +14,35 @@ def reverse_elmap():
 
 def bfs(known, end='dragon', pamle=None):
     """
-        return steps to reach and list of steps (a,b)->c
+        return list of steps (a,b)->c
     """
     assert isinstance(known, set)
     if not pamle:
         pamle = reverse_elmap()
         known = known.copy()
 
-    ret = 1
-    retsteps = pamle[end]
-    for a, b in pamle[end]:
-        if b not in known or b not in known:
+    variants = pamle[end]
+    if not variants:
+        return []
+
+    retcands = []
+    for substrates in variants:
+        a, b = substrates
+        retcand = [(a, b)]
+        
+        if a not in known or b not in known:
             for e in (a, b):
-                steps, steplist = bfs(known, e, pamle=pamle)
-                ret += steps
-                retsteps = steplist + retsteps
-                
-                known.add(e)
-    return ret, retsteps
+                steps = bfs(known.copy(), e, pamle=pamle)
+                retcand = steps + retcand
+
+        retcands.append(retcand)
+
+    retcands.sort(key=lambda x: len(x))
+
+    return retcands[0]
 
 
 if __name__ == '__main__':
     # import timeit
     # print(timeit.timeit(lambda: bfs({'water', 'fire', 'air', 'earth'}, 'dragon'), number=1000))
-    pprint(bfs({'water', 'fire', 'air', 'earth', 'life'}, 'dragon'))
+    pprint(bfs({'water', 'fire', 'air', 'earth'}, 'dragon'))

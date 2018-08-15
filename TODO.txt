@@ -1,4 +1,5 @@
-5.  patryk nie wie jak zrzucić niesiony żywioł - trzeba zrobić osobny przycisk do zrzucania albo dać inny obrazek dla strzału
+5. Czasem hinty są zupełnie do dupy i trzeba zrobić jakiegoś dumpa i debuga czemu tak
+    no i są nie po kolei
 
 6. widok front page, ładniejszy, lepsze wrapowanie
 
