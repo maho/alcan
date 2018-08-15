@@ -1,7 +1,4 @@
-- oliwier gra lewym kciukiem i to jest dla niego niewygodnie, patryk: podnieść do góry i na dole dać przyciski
-- patryk nie wie jak zrzucić niesiony żywioł - trzeba zrobić osobny przycisk do zrzucania albo dać inny obrazek dla strzału
-- patryk: za szybko lecą podpowiedzi
-- patryk: zamiast listy hintów, przewijanie jej palcami
+5.  patryk nie wie jak zrzucić niesiony żywioł - trzeba zrobić osobny przycisk do zrzucania albo dać inny obrazek dla strzału
 
 6. widok front page, ładniejszy, lepsze wrapowanie
 
@@ -10,6 +7,8 @@
 6.3 - niech się belka przesuwa w regularnych odstępach
 
 6.5. rysowana platforma i belki
+
+6.8  oliwier gra lewym kciukiem i to jest dla niego niewygodnie, patryk: podnieść do góry i na dole dać przyciski
 
 7. grafika w tle, wybielona
 

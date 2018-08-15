@@ -233,11 +233,14 @@ class AlcanGame(ClockStopper, PhysicsObject):
         code = Keyboard.keycode_to_string(None, key)
         self.keys_pressed.remove(code)
 
-    def shoot(self):
+    def drop_carried_element(self):
+        self.wizard.release_element()
+
+    def shoot(self, drop=False):
         if self.cannon.shoot():
             self.skip_drop = True
             Clock.schedule_once(lambda dt: setattr(self, 'skip_drop', False), defs.skip_drop_time)
-        else:
+        elif drop:
             self.wizard.release_element()
 
 
@@ -248,7 +251,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.keys_pressed.add(code)
 
         if code == 'spacebar':
-            self.shoot()
+            self.shoot(drop=True)
 
     def on_touch_down(self, touch):
         touch.push()

@@ -29,7 +29,7 @@ map_size = (1280, 720)
 
 skip_drop_time = 3 # how much time to skip dropping new elements, before we know what is result of shot
 drop_useless_chance = 0.000
-drop_chance = 0.002
+drop_chance = 0.005
 drop_zone = (0, 400)
 num_elements_in_zone = (2, 8)
 explode_when_nocomb = False  # explode elements when they make impossible combination

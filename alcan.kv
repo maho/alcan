@@ -197,11 +197,22 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-                source: 'img/shoot.png'
+                source: 'img/button-shoot.png'
         on_press: root.shoot()
         background_color: 0, 0, 0, 0.2
-        pos: 0, 200
-        size: 100, 100
+        pos: 0, 0
+        size: 64, 64
+
+    Button:
+        canvas:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: 'img/button-drop.png'
+        on_press: root.drop_carried_element()
+        background_color: 0, 0, 0, 0.2
+        pos: 80, 0
+        size: 64, 64
 
 
 
