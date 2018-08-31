@@ -6,7 +6,7 @@ export BUILDOZER_BIN_DIR=./bin-$(APP_ANDROID_ARCH)
 
 HTTP_PORT=8001
 
-export APP_VERSION=0.8
+export APP_VERSION=0.9
 export APP_TITLE=alcan
 export APP_PACKAGE_NAME=$(APP_TITLE)
 ADB=adb

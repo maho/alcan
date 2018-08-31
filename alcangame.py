@@ -15,6 +15,7 @@ from baloon import Baloon, PointsBaloon
 from cannon import Cannon
 import defs
 from element import Element, load_elmap
+from ui import IntroLabel
 from wizard import Wizard
 from other import GameOver, Hint, Success
 from utils import adhoco

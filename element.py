@@ -181,13 +181,14 @@ class Element(AnimObject):
                 return -1
             return None
 
-        self.parent.set_hint(self.elname, element.elname, new_elname)
         self.available_elnames.add(new_elname)
         self.parent.reached_elname(new_elname)
 
         self.parent.replace_objs([self, element], Element, new_elname, activate=True)
         self.parent.elements_in_zone.remove(element)
         self.parent.elements_in_zone.remove(self)
+
+        self.parent.rotate_hint()
 
         return +5
 

@@ -1,6 +1,3 @@
-5. Czasem hinty są zupełnie do dupy i trzeba zrobić jakiegoś dumpa i debuga czemu tak
-    no i są nie po kolei
-
 6. widok front page, ładniejszy, lepsze wrapowanie
 
 6.1. Oliwier na easy-medium-hard klikał na "alcan", więc nie jest jasne dla niektórych co trzeba kliknąć żeby zacząć
