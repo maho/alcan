@@ -10,12 +10,14 @@
 
 7. grafika w tle, wybielona
 
-7.3 - kiedy na głównym ekranie się zrobi on_pause, to po powrocie jest zawis, coś się dzieje i apka nie odpowiada. w normalnej grze brak tego efektu
+7.3 - kiedy na głównym ekranie się zrobi on_pause, to po powrocie jest zawis, 
+      coś się dzieje i apka nie odpowiada. w normalnej grze brak tego efektu
 
 7.5. dźwięki
 
 7.8. muzyka
 
+7.9. linux - esc powinien wrócić do głownego ekranu, nie wyjść z gry
 
 8.5. gettext
 

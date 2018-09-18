@@ -99,6 +99,7 @@ fullscreen = 1
 
 # (str) Android NDK version to use
 #android.ndk = 9c
+android.ndk =
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -111,7 +112,7 @@ android.ndk_path = /home/maho/ndk/crystax-ndk-10.3.2
 
 # (str) ANT directory (if empty, it will be automatically downloaded.)
 #android.ant_path =
-# android.java_build_tool = ant
+android.java_build_tool = gradle
 
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time
@@ -192,7 +193,7 @@ android.arch = armeabi-v7a
 #
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-#p4a.source_dir =
+# p4a.source_dir = %(source.dir)s/.p4a
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
 #p4a.local_recipes =

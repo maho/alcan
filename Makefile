@@ -6,10 +6,12 @@ export BUILDOZER_BIN_DIR=./bin-$(APP_ANDROID_ARCH)
 
 HTTP_PORT=8001
 
-export APP_VERSION=0.9
+export APP_VERSION=0.10
 export APP_TITLE=alcan
 export APP_PACKAGE_NAME=$(APP_TITLE)
 ADB=adb
+P4A_URL=https://github.com/kivy/python-for-android
+P4A_REV=22455346
 
 APK=$(BUILDOZER_BIN_DIR)/$(APP_PACKAGE_NAME)-$(APP_VERSION)-debug.apk
 
@@ -32,8 +34,11 @@ run:
 log:
 	$(ADB) logcat | grep -C 5 python
 
-$(APK): $(SRCS)
-	buildozer android debug
+$(APK): $(SRCS) .p4a
+	buildozer $(VERBOSE) android debug
+
+.p4a:
+	git clone $(P4A_URL) .p4a && cd .p4a && git checkout $(P4A_REV)
 
 intel: 
 	make APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug
