@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = AlCan
+title = alcan
 
 # (str) Package name
 package.name = alcan
@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,txt,otf
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-# version = 0.5
+version = 0.10
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -105,7 +105,7 @@ android.ndk =
 #android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
-android.ndk_path = /home/maho/ndk/crystax-ndk-10.3.2
+android.ndk_path = /opt/crystax-ndk-10.3.2
 
 # (str) Android SDK directory (if empty, it will be automatically downloaded.)
 #android.sdk_path =
@@ -229,7 +229,7 @@ log_level = 2
 warn_on_root = 1
 
 # (str) Path to build artifact storage, absolute or relative to spec file
-# build_dir = ./.buildozer
+build_dir = /home/kivy/buildozer-build-dir
 
 # (str) Path to build output (i.e. .apk, .ipa) storage
 # bin_dir = ./bin
