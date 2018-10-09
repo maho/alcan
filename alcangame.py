@@ -259,7 +259,9 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
     def on_touch_down(self, touch):
         touch.push()
+        self.current_touch = adhoco(x=touch.x, y=touch.y)
         touch.apply_transform_2d(lambda x,y: (x/self.scale, y/self.scale))  # quick and dirty, roughly like in Scatter but way simplier
+
 
         try:
             if super().on_touch_down(touch):
@@ -272,26 +274,32 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if touch.is_double_tap:
             return False
 
-        # check if we didn't start some action in UI. Eg when user started to move wizard, it's unconvenient for him to 
-        # aim in the same time, so we need minimum time until we allow him to do different thing
-            Logger.debug("phase set to None")
 
+        # dx to current touch(start)
+        cdx, cdy = touch.x - self.current_touch.x, touch.y - self.current_touch.y
+        Logger.debug("cdx, cdy = %s, %s", cdx, cdy)
         dx, dy = touch.dx, touch.dy
         ix = defs.wizard_touch_impulse_x
 
-        if abs(dx) > abs(dy) and self.touch_phase in (None, 'sweep'):
-            self.wizard.body.apply_impulse((ix * dx, 0))
-            self.touch_phase = 'sweep'
+        # check if we didn't start some action in UI. Eg when user started to move wizard, it's unconvenient for him to 
+        # aim in the same time, so we need minimum time until we allow him to do different thing
+        if self.touch_phase is None and abs(cdx) + abs(cdy) > defs.mintouchdist:
+            self.touch_phase = 'sweep' if abs(cdx) > abs(cdy) else 'aim'
+            Logger.debug("set self touch phase to %s", self.touch_phase)
 
-        if abs(dy) > abs(dx) and self.touch_phase in (None, 'aim'):
+
+        if self.touch_phase == 'sweep':
+            self.wizard.body.apply_impulse((ix * dx, 0))
+        elif self.touch_phase == 'aim':
             self.cannon.aim += dy / 2
-            self.touch_phase = 'aim'
 
         return False
 
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
         self.touch_phase = None
+        self.current_touch = None
+        Logger.debug("on_touch_up ... touch_phase=None")
 
         return super(AlcanGame, self).on_touch_up(touch)
 
