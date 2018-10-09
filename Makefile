@@ -1,7 +1,4 @@
-# export APP_P4A_SOURCE_DIR=~/workspace/p4a/
-# export APP_ANDROID_JAVA_BUILD_TOOL=ant
 export APP_ANDROID_ARCH=armeabi-v7a
-# export BUILDOZER_BUILD_DIR=.bdozer-$(APP_ANDROID_ARCH)   # it was for pre-buildozer times
 export BUILDOZER_BIN_DIR=./bin-$(APP_ANDROID_ARCH)
 
 HTTP_PORT=8001
@@ -20,6 +17,7 @@ DOCKER=docker run -it --rm --privileged \
 					-e APP_ANDROID_ARCH \
 					-e APP_VERSION \
 					-e APP_PACKAGE_NAME \
+					-e BUILDOZER_BIN_DIR=/src/$(BUILDOZER_BIN_DIR) \
 					mahomaho/buildozer-py3:$(DOCKER_TAG)
 
 BDOZER_CMD=$(DOCKER) buildozer $(VERBOSE)
@@ -37,7 +35,7 @@ install: debug
 	$(ADB) install -r $(APK)
 
 run:
-	$(BDOZER_CMD) android debug deploy run logcat
+	$(BDOZER_CMD) android deploy run
 
 docker:
 	$(DOCKER) /bin/bash
@@ -47,9 +45,11 @@ log:
 	$(ADB) logcat | grep -C 5 python
 
 
-$(APK): $(SRCS) .p4a
+$(APK): $(SRCS)
 	$(BDOZER_CMD) android debug
 
+
+# have no idea if it works with buildozer env
 intel: 
 	make APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug
 

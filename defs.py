@@ -22,6 +22,7 @@ wizard_release_impulse = (-100, 2200)
 shoot_force = 7700
 
 mintouchdist = 150
+touch_phase_mintime = 0.75
 
 map_size = (1280, 720)
 
