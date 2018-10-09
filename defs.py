@@ -50,12 +50,9 @@ BOTTOM_BOUND = 1003
 INTRO_TEXT = """
 Long time ago, in the middle ages...
 
-The Swiss Alchemists obsessed with finding way to invent way to breed dragon,
-bring into life theories about transmutation elements into another.
+The Swiss Alchemists obsessed with finding way to invent way to breed dragon, bring into life theories about transmutation elements into another.
 
-Because of lack of philosopher's stone, the Swiss Alchemists has secretly begun
-construction of Large Element Collider, the powerful and complex experimental
-facility.
+Because of lack of philosopher's stone, the Swiss Alchemists has secretly begun construction of Large Element Collider, the powerful and complex experimental facility.
 
 Now L.E.C. is constructed, help them to breed dragon from base elements.
 

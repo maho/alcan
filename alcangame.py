@@ -260,9 +260,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
     def on_touch_down(self, touch):
         touch.push()
         self.current_touch = adhoco(x=touch.x, y=touch.y)
-        touch.apply_transform_2d(lambda x,y: (x/self.scale, y/self.scale))  # quick and dirty, roughly like in Scatter but way simplier
-
-
+        # quick and dirty, roughly like in Scatter but way simplier
+        touch.apply_transform_2d(lambda x,y: (x/self.scale, y/self.scale))
         try:
             if super().on_touch_down(touch):
                 return True
@@ -274,7 +273,8 @@ class AlcanGame(ClockStopper, PhysicsObject):
         if touch.is_double_tap:
             return False
 
-
+        if not self.current_touch:
+            return False
         # dx to current touch(start)
         cdx, cdy = touch.x - self.current_touch.x, touch.y - self.current_touch.y
         Logger.debug("cdx, cdy = %s, %s", cdx, cdy)
