@@ -40,7 +40,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.visible_hints = OrderedDict()
         self.hints_stats = defaultdict(lambda: 0)
         self.skip_drop = False
-        self.touch_phase = (0, None)
+        self.touch_phase = None
 
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
@@ -274,31 +274,24 @@ class AlcanGame(ClockStopper, PhysicsObject):
 
         # check if we didn't start some action in UI. Eg when user started to move wizard, it's unconvenient for him to 
         # aim in the same time, so we need minimum time until we allow him to do different thing
-        phase_start, phase = self.touch_phase 
-        Logger.debug("phase = %s, phase_start = %s time.time=%s", phase, phase_start, time.time())
-        if time.time() - phase_start > defs.touch_phase_mintime:
-            phase = None
             Logger.debug("phase set to None")
 
         dx, dy = touch.dx, touch.dy
         ix = defs.wizard_touch_impulse_x
 
-        if abs(dx) > abs(dy) and phase in (None, 'sweep'):
+        if abs(dx) > abs(dy) and self.touch_phase in (None, 'sweep'):
             self.wizard.body.apply_impulse((ix * dx, 0))
-            phase = 'sweep'
+            self.touch_phase = 'sweep'
 
-        if abs(dy) > abs(dx) and phase in (None, 'aim'):
+        if abs(dy) > abs(dx) and self.touch_phase in (None, 'aim'):
             self.cannon.aim += dy / 2
-            phase = 'aim'
-
-        if phase:
-            self.touch_phase = (time.time(), phase)
-            Logger.debug("self.touch_phase set to %s", self.touch_phase)
+            self.touch_phase = 'aim'
 
         return False
 
     def on_touch_up(self, touch):
         self.keys_pressed.clear()
+        self.touch_phase = None
 
         return super(AlcanGame, self).on_touch_up(touch)
 
