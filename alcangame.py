@@ -41,6 +41,7 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.hints_stats = defaultdict(lambda: 0)
         self.skip_drop = False
         self.touch_phase = None
+        self.left_beam_time = time.time()
 
         EventLoop.window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
 
@@ -356,10 +357,14 @@ class AlcanGame(ClockStopper, PhysicsObject):
         self.update_beam_pos(dt)
 
     def update_beam_pos(self, dt):
-       
-        if random.random() < defs.beam_speed * dt / 600:
+
+        beam_dx = 10
+        beam_move_dt = 60 * beam_dx / defs.beam_speed
+        
+        if (time.time() - self.left_beam_time) > beam_move_dt:
             px, py = self.left_beam.body.position
-            self.left_beam.body.position = (px +10, py)
+            self.left_beam.body.position = (px + beam_dx, py)
+            self.left_beam_time = time.time()
 
     def drop_element(self):
         """ 
