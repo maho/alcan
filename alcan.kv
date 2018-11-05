@@ -170,15 +170,22 @@
         pos: 300, 100
 
     Platform:
+            
         center: 1000,150
         size: 500, 45
         mass: 100
+        imgsrc: 'img/rplatform.png'
+        imgsize: 510, 51
+        imgoffset: -5, -5
 
     Platform: 
         pos: 0,-100
         size: 500, 190
         mass: None
         moment_of_inertia: None
+        imgsrc: 'img/lplatform.png'
+        imgsize: 510, 172
+        imgoffset: 0, 25
 
     Beam:
         id: left_beam
@@ -300,7 +307,11 @@
     size: 400, 50
     angle: 0
     moment_of_inertia:  10**6
-    
+    imgoffset: 0, 0
+    imgsize: 0, 0
+    imgsrc: None
+
+        
     canvas:
 
         PushMatrix
@@ -309,11 +320,12 @@
             angle: root.angle
             origin: self.center
             
-        Color: 
-            rgba: (0., 1., 1., 0.8)
+        # Color: 
+        #    rgba: (0., 1., 1., 0.8)
         Rectangle:
-            pos: self.pos
-            size: self.size
+            pos: self.pos[0] + self.imgoffset[0], self.pos[1] + self.imgoffset[1]
+            size: self.imgsize
+            source: self.imgsrc
 
         PopMatrix
 

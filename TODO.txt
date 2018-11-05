@@ -1,5 +1,3 @@
-6.3 - niech się belka przesuwa w regularnych odstępach
-
 6.5. rysowana platforma i belki
 
 6.8  oliwier gra lewym kciukiem i to jest dla niego niewygodnie, patryk: podnieść do góry i na dole dać przyciski
@@ -21,7 +19,9 @@
 
 9. ikonka, splash 
 
-10. śmiertelne kombinacje
+10. śmiertelne kombinacje ?? raczej nie
+
+11. google play api albo coś w tym stylu, high scores
 
 
 
