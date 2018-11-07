@@ -159,15 +159,6 @@
             size: '40sp', '40sp'
 
 
-    Cannon:
-        id: cannon
-        pos: 400, 100
-        mass: None
-        moment_of_inertia: None 
-
-    Wizard:
-        id: wizard
-        pos: 300, 100
 
     Platform:
             
@@ -178,15 +169,25 @@
         imgsize: 510, 51
         imgoffset: -5, -5
 
-    Platform: 
-        pos: 0,-100
-        size: 500, 190
+    Platform:
+        pos: 0, -440
+        size: 500, 545
         mass: None
         moment_of_inertia: None
-        imgsrc: 'img/lplatform.png'
-        imgsize: 510, 172
-        imgoffset: 0, 25
+        imgsrc: 'img/rplatform.png'
+        imgsize: 505, 45
+        imgoffset: -2, 502
 
+    Cannon:
+        id: cannon
+        pos: 400, 100
+        mass: None
+        moment_of_inertia: None 
+
+    Wizard:
+        id: wizard
+        pos: 300, 100
+    
     Beam:
         id: left_beam
         mass: 'inf'
