@@ -185,9 +185,7 @@ class AnimObject(ClockStopper, PhysicsObject):
         else:
             py += 200
         
-        if not self.parent:
-            self.schedule_once(lambda dt: self.parent.add_widget(Baloon(self, (px, py), text, **kwargs)))
-        else:
+        if self.parent:  # if not have parent, then maybe it doesn't need baloon?
             self.parent.add_widget(
                 Baloon(self, (px, py), text, **kwargs)
             )

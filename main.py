@@ -32,7 +32,7 @@ class Platform(AnimObject):
         shape.elasticity = 0.6
         shape.friction = defs.friction
         shape.collision_type = self.collision_type
-        shape.layers = defs.NORMAL_LAYER
+        # shape.layers = defs.NORMAL_LAYER
 
         return shape
 

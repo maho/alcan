@@ -1,17 +1,17 @@
-6.5. rysowana platforma i belki
-
-6.8  oliwier gra lewym kciukiem i to jest dla niego niewygodnie, patryk: podnieść do góry i na dole dać przyciski
-
-7. grafika w tle, wybielona
-
 7.3 - kiedy na głównym ekranie się zrobi on_pause, to po powrocie jest zawis, 
       coś się dzieje i apka nie odpowiada. w normalnej grze brak tego efektu
 
 7.5. dźwięki
 
+7.6. klawisz "?" od hintu
+
+7.65. klawiszologia na głównym ekranie
+
 7.8. muzyka
 
 7.9. linux - esc powinien wrócić do głownego ekranu, nie wyjść z gry
+
+7.95. zastanowic się czy przypadkiem główny ekran jest spójny graficznie z resztą i czy go nie przerysować
 
 8.5. gettext
 
