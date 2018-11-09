@@ -1,0 +1,7 @@
+.*
+__pycache*
+tags
+bin*
+*.old
+*.pyc
+TODO.txt
