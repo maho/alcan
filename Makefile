@@ -11,7 +11,8 @@ ADB=adb
 APK=$(BUILDOZER_BIN_DIR)/$(APP_PACKAGE_NAME)-$(APP_VERSION)-debug.apk
 
 DOCKER_TAG=abu-usb-privs
-DOCKER=docker run -it --rm --privileged \
+DOCKER_RM="--rm"
+DOCKER=docker run -it $(DOCKER_RM) --privileged \
 				    -v $(PWD):/src \
 				    -v /dev/bus/usb:/dev/bus/usb \
 					-e APP_ANDROID_ARCH \
