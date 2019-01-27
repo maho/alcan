@@ -92,12 +92,20 @@ class AlcanApp(App):
         return self.sm
 
     def on_pause(self):
-        Logger.info("app: on pause calledd")
-        return True
+       Logger.info("app: on pause calledd")
+       return True
 
     def on_resume(self):
-        Logger.info("app: on resume called")
-        return True
+       Logger.info("app: on resume called")
+       return True
+
+#     def on_start(self):
+#         Logger.info("app: on_start called")
+#         return True
+# 
+#     def on_stop(self):
+#         Logger.info("app: on_stop called")
+#         return True
 
 
 if __name__ == '__main__':

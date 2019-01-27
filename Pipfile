@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pudb = "==2018.1"
+ipython = "==5.7.0"
+ipython_genutils = "==0.2.0"
+
+[packages]
+cython = "==0.25.2"
+pillow = "*"
+
+[requires]
+python_version = "3.7"
