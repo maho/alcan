@@ -1,11 +1,19 @@
 version: "3"
 services:
     p4a:
-        image: p4apy3
+        image: p4a_alcan
         volumes:
             - .:/home/user/hostcwd
         # entrypoint: ". venv/bin/activate; bash"
         entrypoint: venv/bin/p4a
         # command: /bin/bash
+
+    p4adev:
+        image: p4a_alcan
+        volumes:
+            - ../python-for-android:/src
+            - .:/home/user/hostcwd
+        entrypoint: /bin/bash
+
 
 

@@ -1,32 +1,33 @@
-export APP_ANDROID_ARCH=armeabi-v7a
-export BUILDOZER_BIN_DIR=./bin-$(APP_ANDROID_ARCH)
+ARCH=armeabi-v7a
+BIN_DIR=./bin-$(ARCH)
 
 HTTP_PORT=8001
 
-export APP_VERSION=0.11
-export APP_TITLE=alcan
-export APP_PACKAGE_NAME=$(APP_TITLE)
+VERSION=0.12
+TITLE=alcan
+DISTNAME=alcan
 ADB=adb
 
-APK=$(BUILDOZER_BIN_DIR)/$(APP_PACKAGE_NAME)-$(APP_VERSION)-debug.apk
-
-DOCKER_TAG=abu-usb-privs
-DOCKER_RM="--rm"
-DOCKER=docker run -it $(DOCKER_RM) --privileged \
-				    -v $(PWD):/src \
-				    -v /dev/bus/usb:/dev/bus/usb \
-					-e APP_ANDROID_ARCH \
-					-e APP_VERSION \
-					-e APP_PACKAGE_NAME \
-					-e BUILDOZER_BIN_DIR=/src/$(BUILDOZER_BIN_DIR) \
-					mahomaho/buildozer-py3:$(DOCKER_TAG)
-
-BDOZER_CMD=$(DOCKER) buildozer $(VERBOSE)
+APK=$(BUILDOZER_BIN_DIR)/$(DISTNAME)-$(VERSION)-debug.apk
 
 SRCS=$(wildcard *.py img/*.png *.kv data/*.txt)
 
 debug:
 	make $(APK)
+
+distsrc:
+	rsync -rv --delete --delete-excluded \
+		--exclude ".*" \
+		--exclude "__pycache__" \
+		--exclude "*.rst" \
+		--exclude "*.xcf" \
+		--exclude "doc" \
+		--exclude "front-skan" \
+		--exclude "docker-compose.yml" \
+		--exclude "Makefile" --exclude "Pipfile" --exclude "*.sh" --exclude "TODO.*" --exclude "req*.txt" --exclude "tags" \
+		$(PWD)/ $(PWD)/.dist/
+	touch .dist
+
 
 serve:
 	make $(APK)
@@ -47,16 +48,11 @@ log:
 
 
 $(APK): $(SRCS)
-	$(BDOZER_CMD) android debug
-
-
-# have no idea if it works with buildozer env
-intel: 
-	make APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug
-
-irun:
-	make APP_ANDROID_ARCH=x86 ADB=~/genymotion/tools/adb debug install log
-
-
-
-
+	docker-compose run p4a apk --sdk-dir=/opt/android/android-sdk \
+		--ndk-dir=/opt/android/android-ndk --ndk-version=r17c \
+		--private=/home/user/hostcwd/.dist --dist-name=alcan --android-api=27 \
+		--debug --arch=armeabi-v7a --bootstrap=sdl2 \
+		--requirements=python3,kivy,cymunk --copy-libs --package=maho.alcan \
+		--version=$(VERSION) --name="Alcan"
+	mkdir -p $(BIN_DIR)
+	mv *.apk $(BIN_DIR)
