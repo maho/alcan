@@ -9,6 +9,11 @@ from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager
 
+import sys
+from os.path import dirname
+sys.path.append(dirname(__file__))
+print("sys.path=", sys.path)
+
 from alcangame import AlcanGame
 from anim import AnimObject
 import defs
