@@ -19,6 +19,7 @@ from element import Element, load_elmap
 from ui import IntroLabel
 from wizard import Wizard
 from other import GameOver, Hint, Success
+from snd import Sounds
 from utils import adhoco
 
 

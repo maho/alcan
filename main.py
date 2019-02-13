@@ -18,6 +18,7 @@ from alcangame import AlcanGame
 from anim import AnimObject
 import defs
 from element import Element
+from snd import load_sounds
 from utils import configure_logger
 
 
@@ -124,4 +125,5 @@ if __name__ == '__main__':
         signal.signal(signal.SIGINT, debug_signal_handler)
 
     configure_logger()
+    load_sounds()
     AlcanApp().run()

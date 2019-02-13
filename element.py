@@ -14,6 +14,7 @@ from anim import AnimObject
 import bfs
 import defs
 from utils import shuffled
+from snd import Sounds
 
 
 def load_elmap():
@@ -189,6 +190,8 @@ class Element(AnimObject):
         self.parent.elements_in_zone.remove(self)
 
         self.parent.rotate_hint()
+
+        Sounds.merge.play()
 
         return +5
 
